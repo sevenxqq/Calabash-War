@@ -1,0 +1,3 @@
+
+//删除当前目录及以下某种文件
+find . -name "*.class" -type f -print -exec rm -rf {} \;
