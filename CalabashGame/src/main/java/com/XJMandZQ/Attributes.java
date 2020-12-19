@@ -6,14 +6,16 @@ import javafx.scene.image.Image;
 public final class Attributes{
     //参数
     public static ArrayList<Image> images = new ArrayList<Image>();
-    public static final int height=744;//地图高度
-    public static final int width=1542;//地图宽度
-    public static final int gridWidth=100;//格子宽度
-    public static final int gridHeight=120;//格子高度
-    public static final int mapLeft=310;//地图左边界
-    public static final int mapTop=110;//地图上边界
-    public static final int mapRight=1110;//地图右边界
-    public static final int mapBottom=590;//地图下边界
+    public static final int height=744;//地图高度（像素级）
+    public static final int width=1542;//地图宽度（像素级）
+    public static final int gridNumX=9;//横向格子数量
+    public static final int gridNumY=5;//纵向格子数量
+    public static final int gridWidth=100;//格子宽度（像素级）
+    public static final int gridHeight=120;//格子高度（像素级）
+    public static final int mapLeft=310;//地图左边界（像素级）
+    public static final int mapTop=110;//地图上边界（像素级）
+    public static final int mapRight=1110;//地图右边界（像素级）
+    public static final int mapBottom=590;//地图下边界（像素级）
 
     //图片编号
     public static final int MAP = 0;
