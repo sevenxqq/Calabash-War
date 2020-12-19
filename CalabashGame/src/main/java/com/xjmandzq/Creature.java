@@ -2,15 +2,16 @@
 基类：生物类
     属性：
         基本属性：阵营，姓名，是否治愈者，移速，是否存活，资源图片
-        空间属性：
+        空间属性：当前位置，目的位置，操作性，指令，可见性
         战斗属性：最大血量，当前血量，最大魔法，当前魔法,普通攻击，技能攻击，技能攻击消耗魔法值,治愈术，治愈消耗魔法值
     构造器：
-
+        构造器1：初始化基本属性
     方法：
         战斗模块：
+            设置初始属性；（针对战斗属性）
             获取属性；get_xxx()
             设置初始位置；
-            移动；
+            移动到目的位置；
             计算释放攻击/技能后属性改变
             计算受伤后属性改变
             计算治愈后属性改变
@@ -23,7 +24,10 @@
 '''
 
 
-package com.XJMandZQ;
+package com.xjmandzq;
+import java.util.concurrent.atomic.*;
+
+
 
 public class Creature implements Runnable{
 
@@ -37,7 +41,13 @@ public class Creature implements Runnable{
     boolean alive;
     String rscname;
     //--------------空间属性--------------
-
+    public AtomicInteger curX=new AtomicInteger(0);
+    public AtomicInteger curY=new AtomicInteger(0);
+    protected int dstX;
+    protected int dstY;
+    public AtomicBoolean avaliable=new AtomicBoolean(true);
+    public AtomicInteger cmd=new AtomicInteger(0);
+    public AtomicBoolean visible=new AtomicBoolean(false);
     //---------------战斗属性-------------
     int maxHP;
     int HP;
@@ -50,15 +60,34 @@ public class Creature implements Runnable{
     int healCost;
 
 //构造器-----------------------------------------//
-
+    public Creature(Camp itscamp,String itsname,boolean ishealer,int itsspeed,boolean isalive,String itsrsc){
+        this.camp = itscamp;
+        this.cname = itsname;
+        this.healer = ishealer;
+        this.speed = itsspeed;
+        this.alive = isalive;
+        this.rscname = itsrsc;
+    }
 
 //方法------------------------------------------//
         //-----------------战斗模块-------------
+        public void initatbt(int itsmaxHP,int itsHP,int itsmaxMP,int itsMP,int itsgnrAtk,int itsmgcAtk,int itsmgcCost,int itshealing,int itshealCost){
+            this.maxHP = itsmaxHP;
+            this.HP = itsHP;
+            this.maxMP = itsmaxMP;
+            this.MP = itsMP;
+            this.gnrAtk = itsgnrAtk;
+            this.mgcAtk = itsmgcAtk;
+            this.mgcCost = itsmgcCost;
+            this.healing = itshealing;
+            this.healCost = itshealCost;
+
+        }
         public void initpos(){
             
         }
 
-        public void move(){
+        public void moveToDst(){
 
         }
         public void useGnrAtk(){
