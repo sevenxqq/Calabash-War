@@ -5,12 +5,12 @@
         空间属性：当前位置，目的位置，操作性，指令，可见性
         战斗属性：最大血量，当前血量，最大魔法，当前魔法,普通攻击，技能攻击，技能攻击消耗魔法值,治愈术，治愈消耗魔法值
     构造器：
-        构造器1：初始化基本属性
+        构造器1：初始化基本属性和战斗属性
     方法：
         战斗模块：
-            设置初始属性；（针对战斗属性）
-            获取属性；get_xxx()
-            设置初始位置；
+            设置初始战斗属性；（好像有些多余，暂时留着）
+            获取属性；get_xxx()；（暂时没写，有需要再加）
+            设置初始位置；（入场动作）
             移动到目的位置；
             计算释放攻击/技能后属性改变
             计算受伤后属性改变
@@ -36,8 +36,8 @@ public class Creature implements Runnable{
     Camp camp;
     String cname;
     boolean healer;
-    int speed;
-    boolean alive;
+    int speed = 1;
+    boolean alive = true;
     String rscname;
     //--------------空间属性--------------
     public AtomicInteger curX=new AtomicInteger(0);
@@ -59,14 +59,26 @@ public class Creature implements Runnable{
     int healCost;
 
 //构造器-----------------------------------------//
-    public Creature(Camp itscamp,String itsname,boolean ishealer,int itsspeed,boolean isalive,String itsrsc){
+    public Creature(Camp itscamp,String itsname,boolean ishealer,int itsspeed,boolean isalive,String itsrsc,
+    int itsmaxHP,int itsHP,int itsmaxMP,int itsMP,int itsgnrAtk,int itsmgcAtk,int itsmgcCost,int itshealing,int itshealCost
+    ){
         this.camp = itscamp;
         this.cname = itsname;
         this.healer = ishealer;
         this.speed = itsspeed;
         this.alive = isalive;
         this.rscname = itsrsc;
+        this.maxHP = itsmaxHP;
+        this.HP = itsHP;
+        this.maxMP = itsmaxMP;
+        this.MP = itsMP;
+        this.gnrAtk = itsgnrAtk;
+        this.mgcAtk = itsmgcAtk;
+        this.mgcCost = itsmgcCost;
+        this.healing = itshealing;
+        this.healCost = itshealCost;
     }
+  
 
 //方法------------------------------------------//
         //-----------------战斗模块-------------
@@ -82,7 +94,7 @@ public class Creature implements Runnable{
             this.healCost = itshealCost;
 
         }
-        public void initpos(){
+        public void initpos(int srcx,int srxy,int dstx,int dsty){
             
         }
 
