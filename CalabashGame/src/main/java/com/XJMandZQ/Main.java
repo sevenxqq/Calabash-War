@@ -30,7 +30,7 @@ public class Main extends Application {
     double mouseY;
     int posX=310;
     int posY=110;
-    ArrayList<Creature> creatures=new ArrayList<>();
+    Battle battle=new Battle();
 
     @Override
     public void init() throws Exception{
@@ -50,7 +50,7 @@ public class Main extends Application {
                 new Creature("minion")
         );
         //ArrayList<Creature> creatures = new ArrayList<>();
-        creatures.addAll(creaturesList);
+
 
     }
 
