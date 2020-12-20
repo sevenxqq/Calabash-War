@@ -1,3 +1,11 @@
 
 //删除当前目录及以下某种文件
 find . -name "*.class,*.lst" -type f -print -exec rm -rf {} \;
+编译网络接口
+javac -encoding UTF-8 GreetingClient.java    
+
+java GreetingClient localhost 6066
+
+运行jar包
+java -jar CalabashGame-1.0-SNAPSHOT.jar 
+java -cp CalabashGame-1.0-SNAPSHOT.jar com.xjmandzq.Main
