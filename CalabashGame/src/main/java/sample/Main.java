@@ -23,36 +23,20 @@ import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 
+
 public class Main extends Application {
     Pane canvas=new Pane();
     Scene scene=new Scene(canvas, Attributes.width, Attributes.height);
     double mouseX;
     double mouseY;
-    int posX=310;
-    int posY=110;
     Battle battle=new Battle();
 
     @Override
     public void init() throws Exception{
         Attributes.init();
-        List<Creature> creaturesList = Arrays.asList(
-                new Creature("calabash1"),
-                new Creature("calabash2"),
-                new Creature("calabash3"),
-                new Creature("calabash4"),
-                new Creature("calabash5"),
-                new Creature("calabash6"),
-                new Creature("calabash7"),
-                new Creature("grandpa"),
-                new Creature("scorpion"),
-                new Creature("snake"),
-                new Creature("pangolin"),
-                new Creature("minion")
-        );
-        //ArrayList<Creature> creatures = new ArrayList<>();
-
 
     }
+
 
     public void startInterface() {
         //背景
@@ -80,24 +64,24 @@ public class Main extends Application {
 
     }
 
-    /*public int changePos(String key){
-        switch(key){
-            case "a":
-                if (posX>310)
-                    posX-=100;
-                break;
-            case "d":
-                posX+=100;
+    int xToPixel(int x){//地图格X坐标转换为像素横坐标
+        return Attributes.mapLeft+x*Attributes.gridWidth;
+    }
 
-        }
-    }*/
+    int yToPixel(int y){//地图格Y坐标转换为像素纵坐标
+        return Attributes.mapTop+y*Attributes.gridHeight;
+    }
+
     public void enterBattle() {
-        //地图
+        Battle battle=new Battle();
+
+        //显示地图
         ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
         map.setFitWidth(Attributes.width);
         canvas.getChildren().add(map);
 
+        //加载角色图片
         List<ImageView> picsList=Arrays.asList(
                 new ImageView(Attributes.images.get(Attributes.CALABASH1)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH2)),
@@ -107,9 +91,15 @@ public class Main extends Application {
                 new ImageView(Attributes.images.get(Attributes.CALABASH6)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH7)),
                 new ImageView(Attributes.images.get(Attributes.GRANDPA)),
+                new ImageView(Attributes.images.get(Attributes.PANGOLIN)),
                 new ImageView(Attributes.images.get(Attributes.SCORPION)),
                 new ImageView(Attributes.images.get(Attributes.SNAKE)),
-                new ImageView(Attributes.images.get(Attributes.PANGOLIN)),
+                new ImageView(Attributes.images.get(Attributes.MINION)),
+                new ImageView(Attributes.images.get(Attributes.MINION)),
+                new ImageView(Attributes.images.get(Attributes.MINION)),
+                new ImageView(Attributes.images.get(Attributes.MINION)),
+                new ImageView(Attributes.images.get(Attributes.MINION)),
+                new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION))
         );
         ArrayList<ImageView> pics=new ArrayList<>();
@@ -122,55 +112,48 @@ public class Main extends Application {
         ArrayList<Label> labels=new ArrayList<>();
         for(int i=0;i< pics.size();i++){
             Label label=new Label("",pics.get(i));
-            label.setLayoutX(posX);
-            posX+=100;
-            System.out.println(posX);
-            label.setLayoutY(posY);
-            System.out.println(posY);
+            label.setLayoutX(Attributes.mapLeft+battle.roles.get(i).posX*Attributes.gridWidth);
+            label.setLayoutY(Attributes.mapTop+battle.roles.get(i).posY*Attributes.gridHeight);
             labels.add(label);
             canvas.getChildren().add(label);
         }
-        ImageView c = new ImageView(Attributes.images.get(Attributes.CALABASH4));
-        c.setFitHeight(100);
-        c.setFitWidth(100);
-        canvas.getChildren().add(c);
 
-        Label startLabel = new Label("", c);
-        //startLabel.setMaxSize(200,100);
-        startLabel.setLayoutX(posX);
-        startLabel.setLayoutY(posY);
-        canvas.getChildren().add(startLabel);
         /*scene.setOnKeyPressed((KeyEvent e) -> {
             changePos(e.getText());
             System.out.println("a");
         });*/
+        //响应键盘，控制角色移动和攻击
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.A) {
-                    System.out.println("a");
-                    if (posX>Attributes.mapLeft)
-                        posX-=Attributes.gridWidth;
+                int selected=battle.selected;
+                String key= event.getText();
+                if (key.length()>0 && key.charAt(0)>='1' && key.charAt(0)<='9'){
+                    selected=key.charAt(0)-'1';
+                    battle.selected=selected;
+                    System.out.println(selected);
                 }
-                else if (event.getCode() == KeyCode.D) {
-                    System.out.println("d");
-                    if (posX<Attributes.mapRight)
-                        posX+=Attributes.gridWidth;
+                else if (key.equals("a")) {
+                    battle.roles.get(selected).move(Direction.LEFT);
                 }
-                else if (event.getCode() == KeyCode.W) {
-                    System.out.println("w");
-                    if (posY>Attributes.mapTop)
-                        posY-=Attributes.gridHeight;
+                else if (key.equals("d")) {
+                    battle.roles.get(selected).move(Direction.RIGHT);
                 }
-                else if (event.getCode() == KeyCode.S) {
-                    System.out.println("s");
-                    if (posY<Attributes.mapBottom)
-                        posY+=Attributes.gridHeight;
+                else if (key.equals("w")) {
+                    battle.roles.get(selected).move(Direction.UP);
                 }
-                //startLabel.setLayoutX(posX);
-                //startLabel.setLayoutY(posY);
+                else if (key.equals("s")) {
+                    battle.roles.get(selected).move(Direction.DOWN);
+                }
+                labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).posX));
+                labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).posY));
             }
         });
+        //响应鼠标，选中人物
+        /*canvas.setOnMousePressed((MouseEvent e)->{
+            mouseX = e.getSceneX();
+            mouseY = e.getSceneY();
+        });*/
     }
     @Override
     public void start(Stage primaryStage) throws Exception{

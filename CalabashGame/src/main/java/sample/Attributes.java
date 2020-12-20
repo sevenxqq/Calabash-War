@@ -16,6 +16,7 @@ public final class Attributes{
     public static final int mapTop=110;//地图上边界（像素级）
     public static final int mapRight=1110;//地图右边界（像素级）
     public static final int mapBottom=590;//地图下边界（像素级）
+    public static final int rolesNum=9;//角色数量
 
     //图片编号
     public static final int MAP = 0;
