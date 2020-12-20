@@ -1,4 +1,4 @@
-package sample;
+package com.xjmandzq;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -112,8 +112,8 @@ public class Main extends Application {
         ArrayList<Label> labels=new ArrayList<>();
         for(int i=0;i< pics.size();i++){
             Label label=new Label("",pics.get(i));
-            label.setLayoutX(Attributes.mapLeft+battle.roles.get(i).posX*Attributes.gridWidth);
-            label.setLayoutY(Attributes.mapTop+battle.roles.get(i).posY*Attributes.gridHeight);
+            label.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
+            label.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight);
             labels.add(label);
             canvas.getChildren().add(label);
         }
@@ -145,10 +145,16 @@ public class Main extends Application {
                 else if (key.equals("s")) {
                     battle.roles.get(selected).move(Direction.DOWN);
                 }
+                else if (key.equals("j")){ //暂时设置为向右攻击
+                    battle.roles.get(selected).useGnrAtk(Direction.Right);
+                }
                 labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
                 labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()));
             }
         });
+
+       
+
         //响应鼠标，选中人物
         /*canvas.setOnMousePressed((MouseEvent e)->{
             mouseX = e.getSceneX();

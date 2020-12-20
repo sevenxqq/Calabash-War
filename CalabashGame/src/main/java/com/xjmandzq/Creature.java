@@ -195,7 +195,6 @@ public class Creature implements Runnable{
         }
         /*
             parm:损失血量
-           
         */
         public void beenAtked(int lost){
             this.HP-=lost;
