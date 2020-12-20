@@ -2,7 +2,7 @@
 package com.xjmandzq;
 
 import java.lang.annotation.*;
-import com.xjmandzq.Creature.Camp;
+
 
 // @Documented
 @Retention(RetentionPolicy.RUNTIME)

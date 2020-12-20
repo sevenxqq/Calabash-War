@@ -145,8 +145,8 @@ public class Main extends Application {
                 else if (key.equals("s")) {
                     battle.roles.get(selected).move(Direction.DOWN);
                 }
-                labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).posX));
-                labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).posY));
+                labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
+                labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()));
             }
         });
         //响应鼠标，选中人物

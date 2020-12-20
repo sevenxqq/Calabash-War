@@ -40,8 +40,8 @@ public class Battle{
                 new Creature(17,"minion",this)
         );
         for(int i=0;i<rolesList.size();i++){
-            rolesList.get(i).posX=startPos[i]%9;
-            rolesList.get(i).posY=startPos[i]/9;
+            rolesList.get(i).curX.set(startPos[i]%9);
+            rolesList.get(i).curY.set(startPos[i]/9);
         }
         roles.addAll(rolesList);
         //
