@@ -116,7 +116,14 @@ public class Main extends Application {
             label.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight);
             labels.add(label);
             canvas.getChildren().add(label);
+            //血条和图片位置相近
+            // Label labelbar = new Label("",battle.hpbars.get(i));
+            // labelbar.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
+            // labelbar.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight - 3);
+            // labels.add(labelbar);
+            // canvas.getChildren().add(labelbar);
         }
+       
 
         /*scene.setOnKeyPressed((KeyEvent e) -> {
             changePos(e.getText());
@@ -146,7 +153,7 @@ public class Main extends Application {
                     battle.roles.get(selected).move(Direction.DOWN);
                 }
                 else if (key.equals("j")){ //暂时设置为向右攻击
-                    battle.roles.get(selected).useGnrAtk(Direction.Right);
+                    battle.roles.get(selected).useGnrAtk(Direction.RIGHT);
                 }
                 labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
                 labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()));

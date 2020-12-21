@@ -6,7 +6,8 @@ import java.util.List;
 
 public class Battle{
     int[] map=new int[Attributes.gridNumX*Attributes.gridNumY];//记录地图中每格的角色id
-    ArrayList<Creature> roles=new ArrayList<>();//存储游戏角色
+    ArrayList<Creature> roles = new ArrayList<>();//存储游戏角色
+    ArrayList<Info> hpbars =  new ArrayList<>();//角色对应的血条,存储顺序和角色一样
     //Map<String,Integer> roleId=new HashMap<>();
     int[] startPos={9,10,11,20,27,28,29,19,18,17,35,15,16,24,25,26,33,34};
     int selected;//被选中的角色id
@@ -47,6 +48,9 @@ public class Battle{
         //
         //roleId.put("bro1",0);
         //roleId.put("bro1",0);
+        ///////////////////////
+       
+        //////////////////////////
     }
     /*
     public Creature getRole(int x,int y){
