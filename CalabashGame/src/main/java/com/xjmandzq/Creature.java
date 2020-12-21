@@ -90,6 +90,8 @@ public class Creature implements Runnable{
         this.battle=battle;
         this.maxHP = 100;
         this.maxMP = 100;
+        this.HP = this.maxHP;
+        this.MP = this.maxMP;
     }
 
 //方法------------------------------------------//
@@ -198,6 +200,7 @@ public class Creature implements Runnable{
         */
         public void beenAtked(int lost){
             this.HP-=lost;
+            battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
             if (HP<=0){ //死亡后，地图上格子设为空，！！！确定人物已经消失不再展示了吗？要不要放置墓碑？）
                 this.alive = false; 
                 battle.map[curX.get() * Attributes.gridNumY + curY.get()] = -1;

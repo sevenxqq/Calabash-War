@@ -43,6 +43,9 @@ public class Battle{
         for(int i=0;i<rolesList.size();i++){
             rolesList.get(i).curX.set(startPos[i]%9);
             rolesList.get(i).curY.set(startPos[i]/9);
+            Info tempbar = new Info();
+            tempbar.setBar(rolesList.get(i));
+            hpbars.add(tempbar);
         }
         roles.addAll(rolesList);
         //

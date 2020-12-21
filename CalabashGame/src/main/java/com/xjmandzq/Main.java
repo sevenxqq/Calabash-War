@@ -81,7 +81,7 @@ public class Main extends Application {
         map.setFitWidth(Attributes.width);
         canvas.getChildren().add(map);
 
-        //加载角色图片
+        //加载角色图片和血条
         List<ImageView> picsList=Arrays.asList(
                 new ImageView(Attributes.images.get(Attributes.CALABASH1)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH2)),
@@ -107,7 +107,6 @@ public class Main extends Application {
         for(int i=0;i<pics.size();i++){
             pics.get(i).setFitWidth(100);
             pics.get(i).setFitHeight(100);
-            //canvas.getChildren().add(pics.get(i));
         }
         ArrayList<Label> labels=new ArrayList<>();
         for(int i=0;i< pics.size();i++){
@@ -116,14 +115,15 @@ public class Main extends Application {
             label.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight);
             labels.add(label);
             canvas.getChildren().add(label);
-            //血条和图片位置相近
-            // Label labelbar = new Label("",battle.hpbars.get(i));
-            // labelbar.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
-            // labelbar.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight - 3);
-            // labels.add(labelbar);
-            // canvas.getChildren().add(labelbar);
         }
-       
+        for(int i=0;i< pics.size();i++){
+            battle.hpbars.get(i).setBar(battle.roles.get(i));
+            Label labelbar = new Label("",battle.hpbars.get(i));
+            labelbar.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
+            labelbar.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight - 3);
+            labels.add(labelbar);
+            canvas.getChildren().add(labelbar);
+        }
 
         /*scene.setOnKeyPressed((KeyEvent e) -> {
             changePos(e.getText());
@@ -157,6 +157,9 @@ public class Main extends Application {
                 }
                 labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
                 labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()));
+                labels.get(selected + 18).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
+                labels.get(selected + 18).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()) -3 );
+                
             }
         });
 
