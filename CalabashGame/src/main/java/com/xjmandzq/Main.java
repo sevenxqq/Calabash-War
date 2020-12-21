@@ -153,7 +153,10 @@ public class Main extends Application {
                     battle.roles.get(selected).move(Direction.DOWN);
                 }
                 else if (key.equals("j")){ //暂时设置为向右攻击
-                    battle.roles.get(selected).useGnrAtk(Direction.RIGHT);
+                    int atkid = battle.roles.get(selected).useGnrAtk(Direction.RIGHT);
+                    if (atkid!=-1)
+                        System.out.println("攻击" + atkid +"血量为" + battle.roles.get(atkid).HP);
+
                 }
                 labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
                 labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()));

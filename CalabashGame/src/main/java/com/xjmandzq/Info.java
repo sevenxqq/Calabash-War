@@ -21,7 +21,7 @@ import javafx.scene.text.TextAlignment;
     样式： textname: 矩形框，框内填充颜色 这里
     信息类：显示血条和蓝条; （有时间或许还能做个进度条？）
     暂时没想到应该放哪，想把这个实现了然后看看普通攻击是否正常工作
-    属性：血值显示图，蓝值显示图，显示条,血条，蓝条，宽度，高度,提示，可见性
+    属性：(血值显示图，蓝值显示图)显示条,血条，蓝条，宽度，高度,提示，可见性
     构造器：
         正在学习如何显示，默认构造器里先放一些如何使用的代码
     方法：
@@ -31,8 +31,8 @@ import javafx.scene.text.TextAlignment;
 
 class Info extends Pane{
 //属性-------------------------------
-    ImageView HPview;
-    ImageView MPview;
+    // ImageView HPview;
+    // ImageView MPview;
     Rectangle HPbar;
     // Rectangle MPbar;
     final int width = 90; 
@@ -45,7 +45,7 @@ class Info extends Pane{
     public Info()
     {
         HPbar = new Rectangle(width,height);
-        Stop[] stops = new Stop[] { new Stop(0, Color.BLACK), new Stop(1, Color.WHITE)}; 
+        Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(1, Color.RED)}; 
         LinearGradient lg1 = new LinearGradient( 0,0,1,0,true, CycleMethod.NO_CYCLE,stops);
         HPbar.setFill(lg1);
         setMaxSize(width,height);
@@ -67,10 +67,14 @@ class Info extends Pane{
     }
 //方法-----------------------------
     public void setBar(Creature role){
+        if (role.HP==role.maxHP)
+            return;
         float ratio = (float)role.HP/(float)role.maxHP;
-        Stop [] stops = new Stop[] { new Stop(0, Color.RED), new Stop(ratio,Color.RED),new Stop(1, Color.WHITE)}; 
+        Stop[] stops = new Stop[] { new Stop(0, Color.rgb(255,0,0)), new Stop(ratio,Color.rgb(255, 153, 18,0.5)),
+                 new Stop(1, Color.rgb(255,255,255,0)) };
         LinearGradient lg1 = new LinearGradient( 0,0,1,0,true, CycleMethod.NO_CYCLE,stops);
         HPbar.setFill(lg1);
+        
     }
 
     public void showBar(){

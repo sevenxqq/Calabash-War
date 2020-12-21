@@ -21,24 +21,24 @@ public class Battle{
         }
         //添加角色
         List<Creature> rolesList = Arrays.asList(
-                new Creature(0,"calabash1",this),
-                new Creature(1,"calabash2",this),
-                new Creature(2,"calabash3",this),
-                new Creature(3,"calabash4",this),
-                new Creature(4,"calabash5",this),
-                new Creature(5,"calabash6",this),
-                new Creature(6,"calabash7",this),
-                new Creature(7,"grandpa",this),
-                new Creature(8,"scorpion",this),
-                new Creature(9,"snake",this),
-                new Creature(10,"pangolin",this),
-                new Creature(11,"minion",this),
-                new Creature(12,"minion",this),
-                new Creature(13,"minion",this),
-                new Creature(14,"minion",this),
-                new Creature(15,"minion",this),
-                new Creature(16,"minion",this),
-                new Creature(17,"minion",this)
+                new Creature(0,"calabash1",Camp.CALABASH,this),
+                new Creature(1,"calabash2",Camp.CALABASH,this),
+                new Creature(2,"calabash3",Camp.CALABASH,this),
+                new Creature(3,"calabash4",Camp.CALABASH,this),
+                new Creature(4,"calabash5",Camp.CALABASH,this),
+                new Creature(5,"calabash6",Camp.CALABASH,this),
+                new Creature(6,"calabash7",Camp.CALABASH,this),
+                new Creature(7,"grandpa",Camp.CALABASH,this),
+                new Creature(8,"scorpion",Camp.MONSTER,this),
+                new Creature(9,"snake",Camp.MONSTER,this),
+                new Creature(10,"pangolin",Camp.MONSTER,this),
+                new Creature(11,"minion",Camp.MONSTER,this),
+                new Creature(12,"minion",Camp.MONSTER,this),
+                new Creature(13,"minion",Camp.MONSTER,this),
+                new Creature(14,"minion",Camp.MONSTER,this),
+                new Creature(15,"minion",Camp.MONSTER,this),
+                new Creature(16,"minion",Camp.MONSTER,this),
+                new Creature(17,"minion",Camp.MONSTER,this)
         );
         for(int i=0;i<rolesList.size();i++){
             rolesList.get(i).curX.set(startPos[i]%9);

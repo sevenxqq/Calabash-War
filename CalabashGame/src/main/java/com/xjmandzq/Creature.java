@@ -65,7 +65,7 @@ public class Creature implements Runnable{
 
 //构造器-----------------------------------------//
     public Creature(Camp itscamp,String itsname,boolean ishealer,int itsspeed,boolean isalive,String itsrsc,
-    int itsmaxHP,int itsHP,int itsmaxMP,int itsMP,int itsgnrAtk,int itsmgcAtk,int itsmgcCost,int itshealing,int itshealCost
+    int itsmaxHP,int itsmaxMP,int itsgnrAtk,int itsmgcAtk,int itsmgcCost,int itshealing,int itshealCost
     ){
         this.camp = itscamp;
         this.cname = itsname;
@@ -74,9 +74,9 @@ public class Creature implements Runnable{
         this.alive = isalive;
         this.rscname = itsrsc;
         this.maxHP = itsmaxHP;
-        this.HP = itsHP;
+        this.HP = this.maxHP;
         this.maxMP = itsmaxMP;
-        this.MP = itsMP;
+        this.MP = this.maxMP;
         this.gnrAtk = itsgnrAtk;
         this.mgcAtk = itsmgcAtk;
         this.mgcCost = itsmgcCost;
@@ -84,7 +84,7 @@ public class Creature implements Runnable{
         this.healCost = itshealCost;
     }
   
-    public Creature(int id,String name,Battle battle){
+    public Creature(int id,String name,Camp icamp,Battle battle){
         this.id=id;
         this.cname=name;
         this.battle=battle;
@@ -92,6 +92,8 @@ public class Creature implements Runnable{
         this.maxMP = 100;
         this.HP = this.maxHP;
         this.MP = this.maxMP;
+        this.camp = icamp;
+        this.gnrAtk = 10;//暂时写着
     }
 
 //方法------------------------------------------//
@@ -142,21 +144,22 @@ public class Creature implements Runnable{
             解释：只能朝一个格子内的敌人发起攻击
             附加：后期可加红色数字图标展示失血效果
         */
-        public void useGnrAtk(Direction dir){
+        public int useGnrAtk(Direction dir){
             int atkx = curX.get(),atky = curY.get();
             switch(dir){
                 case UP: atky--;break;
                 case DOWN: atky++;break;
                 case LEFT:atkx--;break;
                 case RIGHT:atkx++;break;
-                default: return;
+                default: return -1;
             }
             if (battle.isOccupied(atkx,atky) == false)
-                return;
+                return -1;
             int atkid = battle.map[Attributes.gridNumX*atky+atkx];
             if (this.camp == battle.roles.get(atkid).camp)
-                return;
+                return -1;
             battle.roles.get(atkid).beenAtked(this.gnrAtk);
+            return atkid;
         }
         /*
             暂时不写
@@ -201,9 +204,11 @@ public class Creature implements Runnable{
         public void beenAtked(int lost){
             this.HP-=lost;
             battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
+            System.out.println(this.id + "被攻击" + this.HP);
             if (HP<=0){ //死亡后，地图上格子设为空，！！！确定人物已经消失不再展示了吗？要不要放置墓碑？）
                 this.alive = false; 
-                battle.map[curX.get() * Attributes.gridNumY + curY.get()] = -1;
+                battle.map[curY.get() * Attributes.gridNumX + curX.get()] = -1;
+                System.out.println("todo:人物死亡移除图片成墓碑");
             }
         }
         public void beenHealed(int inc){
