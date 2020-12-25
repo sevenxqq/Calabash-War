@@ -51,21 +51,11 @@ public class Battle{
             hpbars.add(tempbar);
         }
         roles.addAll(rolesList);
-        //
-        //roleId.put("bro1",0);
-        //roleId.put("bro1",0);
-        ///////////////////////
+       
        
         //////////////////////////
     }
-    /*
-    public Creature getRole(int x,int y){
-        return roles.get(map[x*Attributes.gridNumX+y]);
-    }
-    public int getRoleId(int x,int y){
-        return map[x*Attributes.gridNumX+y];
-    }
-     */
+    
 
     public void setCamp(Camp c){
         myCamp=c;

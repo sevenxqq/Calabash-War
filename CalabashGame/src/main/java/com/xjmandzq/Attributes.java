@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javafx.scene.image.Image;
 
 public final class Attributes{
+    public static final String serverIP = "127.0.0.1"; //服务器ip:,127.0.0.1; 172.24.52.200
     //参数
     public static ArrayList<Image> images = new ArrayList<Image>();
     public static final int height=744;//地图高度（像素级）
@@ -35,25 +36,7 @@ public final class Attributes{
     public static final int SNAKE = 13;
     public static final int SCORPION = 14;
     public static final int MINION = 15;
-    /*
-    public static final int STARTPOSX = 15;
-    public static final int STARTPOSY = 16;
-
-    public static final int INDEX_MONSTERHEAD = 17;
-    public static final int INDEX_HUMANCABIN = 18;
-    public static final int INDEX_MONSTERCAVE = 19;
-    public static final int INDEX_PREPAREGACKGROUND = 20;
-    public static final int INDEX_HUMANHEAD2 = 21;
-    public static final int INDEX_MONSTERHEAD2 = 22;
-    public static final int INDEX_TWOPLAYER = 23;
-    public static final int INDEX_AUTOPLAY = 24;
-    public static final int INDEX_TWOPLAYER2 = 25;
-    public static final int INDEX_AUTOPLAY2 = 26;
-    public static final int INDEX_BATTLEFIELD = 27;
-    public static final int INDEX_B_ATTACK12 = 28;
-    public static final int INDEX_B_ATTACK22 = 29;
-    public static final int INDEX_B_ATTACK32 = 30;
-     */
+  
     //
     public static void init(){
         //添加图片

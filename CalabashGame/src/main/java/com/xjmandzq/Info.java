@@ -74,56 +74,55 @@ class Info extends Pane{
                  new Stop(1, Color.rgb(255,255,255,0)) };
         LinearGradient lg1 = new LinearGradient( 0,0,1,0,true, CycleMethod.NO_CYCLE,stops);
         HPbar.setFill(lg1);
-        
     }
 
-    public void showBar(){
-        double dy = width/10;
-        new Thread(()->{
-            lock.lock();
-            if (visible.get() == true) //已经是显示状态
-                return;
-            visible.set(true);
-            double cury = getLayoutY();
-            for (int i = 0; i < 10; i++) {
-                cury -= dy;
-                double y = cury;
-                Platform.runLater(()-> {
-                    relocate(getLayoutX(), y);
-                });
-                try {
-                    Thread.sleep(700 / 36);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            lock.unlock();
-        }).start();
-    }
+//     public void showBar(){
+//         double dy = width/10;
+//         new Thread(()->{
+//             lock.lock();
+//             if (visible.get() == true) //已经是显示状态
+//                 return;
+//             visible.set(true);
+//             double cury = getLayoutY();
+//             for (int i = 0; i < 10; i++) {
+//                 cury -= dy;
+//                 double y = cury;
+//                 Platform.runLater(()-> {
+//                     relocate(getLayoutX(), y);
+//                 });
+//                 try {
+//                     Thread.sleep(700 / 36);
+//                 } catch (InterruptedException e) {
+//                     e.printStackTrace();
+//                 }
+//             }
+//             lock.unlock();
+//         }).start();
+//     }
 
-    public void hideBar(){
-        double dy = width;
-        new Thread(()->{
-            lock.lock();
-            if(visible.get() == false) {
-                return;
-            }
-            visible.set(false);
-            double cury = getLayoutY();
-            for (int i = 0; i < 36; i++) {
-                cury += dy;
-                double y = cury;
-                Platform.runLater(()-> {
-                    relocate(getLayoutX(), y);
-                });
-                try {
-                    Thread.sleep(700 / 36);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            lock.unlock();
-        }).start();
-    }
+//     public void hideBar(){
+//         double dy = width;
+//         new Thread(()->{
+//             lock.lock();
+//             if(visible.get() == false) {
+//                 return;
+//             }
+//             visible.set(false);
+//             double cury = getLayoutY();
+//             for (int i = 0; i < 36; i++) {
+//                 cury += dy;
+//                 double y = cury;
+//                 Platform.runLater(()-> {
+//                     relocate(getLayoutX(), y);
+//                 });
+//                 try {
+//                     Thread.sleep(700 / 36);
+//                 } catch (InterruptedException e) {
+//                     e.printStackTrace();
+//                 }
+//             }
+//             lock.unlock();
+//         }).start();
+//     }
 
 }

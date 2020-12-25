@@ -3,9 +3,11 @@
 find . -name "*.class,*.lst" -type f -print -exec rm -rf {} \;
 编译网络接口
 javac -encoding UTF-8 GreetingClient.java    
+javac -encoding UTF-8 CalabashServer.java   
 
 java GreetingClient localhost 6066
-
+javac GreetingServer.java 
+java GreetingServer 
 
 运行jar包
 java -jar CalabashGame-1.0-SNAPSHOT.jar 

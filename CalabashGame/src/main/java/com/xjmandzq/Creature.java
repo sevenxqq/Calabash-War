@@ -31,7 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
-public class Creature implements Runnable{
+public class Creature {
 
 //属性-------------------------------------------//
     //--------------基本属性----------------
@@ -215,20 +215,20 @@ public class Creature implements Runnable{
             this.HP = Math.min(HP + inc,maxHP);
         }
         //------------------控制模块-------------
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    Thread.sleep(50);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                cmdHandler();       
-            }
-        }
-        protected void cmdHandler() {
+        // @Override
+        // public void run() {
+        //     while (true) {
+        //         try {
+        //             Thread.sleep(50);
+        //         } catch (Exception e) {
+        //             e.printStackTrace();
+        //         }
+        //         cmdHandler();       
+        //     }
+        // }
+        // protected void cmdHandler() {
             
-        }
+        // }
 
 
     

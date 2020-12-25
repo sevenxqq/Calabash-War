@@ -2,8 +2,7 @@
   
 package com.xjmandzq;
 
-//import client.protocol.*;
-//import server.TankServer;
+
 
 import java.io.*;
 import java.net.DatagramPacket;
@@ -36,16 +35,13 @@ public class CalabashClient {
         }
     }
 
-    /*public static void main(String[] args){
-        CalabashClient calabashClient=new CalabashClient();
-        calabashClient.connect("127.0.0.1");
-    }*/
+   
     /**
      * 与服务器进行TCP连接
      * @param ip server IP
      */
     public void connect(String ip){
-        serverIP = "127.0.0.1";
+        serverIP = Attributes.serverIP;
         Socket s = null;
         try {
             ds = new DatagramSocket(UDP_PORT);//创建UDP套接字
@@ -69,9 +65,7 @@ public class CalabashClient {
             else
                 player.battle.setCamp(Camp.BYSTANDER);
             player.battle.setCamp((id==0)?Camp.CALABASH:Camp.MONSTER);
-            //this.TANK_DEAD_UDP_PORT = in.readInt();//获得服务器监听坦克死亡的UDP端口//TODO
-            //tc.getMyTank().setId(id);//设置坦克的id号
-            //tc.getMyTank().setGood((id & 1) == 0 ? true : false);//根据坦克的id号分配阵营
+           
             System.out.println("connect to server successfully...");
         } catch (IOException e) {
             e.printStackTrace();

@@ -86,7 +86,7 @@ public class Main extends Application {
         start.setFitHeight(Attributes.height);
         start.setFitWidth(Attributes.width);
         canvas.getChildren().add(start);
-        calabashClient.connect("127.0.0.1");
+        calabashClient.connect(Attributes.serverIP); 
         enterBattle();
     }
 
@@ -129,7 +129,7 @@ public class Main extends Application {
         for(int i=0;i<pics.size();i++){
             pics.get(i).setFitWidth(100);
             pics.get(i).setFitHeight(100);
-            //canvas.getChildren().add(pics.get(i));
+           
         }
         //人物的显示
         for(int i=0;i< pics.size();i++){
@@ -151,10 +151,7 @@ public class Main extends Application {
             canvas.getChildren().add(labelbar);
         }
 
-        /*scene.setOnKeyPressed((KeyEvent e) -> {
-            changePos(e.getText());
-            System.out.println("a");
-        });*/
+       
         //响应键盘，控制角色移动和攻击
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -195,11 +192,7 @@ public class Main extends Application {
                 calabashClient.send(message);
             }
         });
-        //响应鼠标，选中人物
-        /*canvas.setOnMousePressed((MouseEvent e)->{
-            mouseX = e.getSceneX();
-            mouseY = e.getSceneY();
-        });*/
+       
     }
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -209,12 +202,7 @@ public class Main extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
-        //canvas.setStyle("-fx-background-color: black;");
-        /*ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
-        map.setFitHeight(Attributes.height);
-        map.setFitWidth(Attributes.width);
-        //canvas.setPrefSize(500,200);
-        canvas.getChildren().add(map);*/
+        
 
         canvas.setOnMousePressed((MouseEvent e)->{
             mouseX = e.getSceneX();
@@ -225,12 +213,7 @@ public class Main extends Application {
             primaryStage.setY(e.getScreenY() - mouseY);
 
         });
-        /*scene.setOnKeyPressed((KeyEvent e)->{
-            if (e.getCode() == KeyCode.A) {
-                System.out.println("a");
-            }
-            System.out.println("a");
-        });*/
+       
         startInterface();
     }
 
