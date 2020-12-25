@@ -5,10 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Battle{
+    boolean started=false;
+    int enemyId;
     int[] map=new int[Attributes.gridNumX*Attributes.gridNumY];//记录地图中每格的角色id
     ArrayList<Creature> roles=new ArrayList<>();//存储游戏角色
+    ArrayList<Info> hpbars =  new ArrayList<>();//角色对应的血条,存储顺序和角色一样
     //Map<String,Integer> roleId=new HashMap<>();
-    int[] startPos={9,10,11,20,27,28,29,19,18,17,35,15,16,24,25,26,33,34};
+    int[] startPos={9,10,11,20,27,28,29,19,18,17,35,15,16,24,25,26,33,34};//游戏开始角色布局
+    Camp myCamp=Camp.CALABASH;
     int selected;//被选中的角色id
     Battle(){
         //游戏开始时角色在地图上的排列情况
@@ -40,8 +44,11 @@ public class Battle{
                 new Creature(17,"minion",this)
         );
         for(int i=0;i<rolesList.size();i++){
-            rolesList.get(i).posX=startPos[i]%9;
-            rolesList.get(i).posY=startPos[i]/9;
+            rolesList.get(i).curX.set(startPos[i]%9);
+            rolesList.get(i).curY.set(startPos[i]/9);
+            Info tempbar = new Info();
+            tempbar.setBar(rolesList.get(i));
+            hpbars.add(tempbar);
         }
         roles.addAll(rolesList);
         //
@@ -56,6 +63,9 @@ public class Battle{
         return map[x*Attributes.gridNumX+y];
     }
      */
+    public void setCamp(Camp c){
+        myCamp=c;
+    }
     public boolean isOccupied(int x,int y){//判断地图[x,y]位置是否被角色占用
         return map[y*Attributes.gridNumX+x]!=-1;
     }
