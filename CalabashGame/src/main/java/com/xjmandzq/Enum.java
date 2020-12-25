@@ -5,5 +5,5 @@ enum Direction{
 }
 
 enum Camp{ 
-    CALABASH,MONSTER 
+    CALABASH,MONSTER,BYSTANDER
 }

@@ -1,3 +1,6 @@
+
+
+  
 package com.xjmandzq;
 
 import java.lang.reflect.Array;
@@ -25,12 +28,14 @@ import javafx.stage.StageStyle;
 
 
 public class Main extends Application {
+    int id;
     Pane canvas=new Pane();
     Scene scene=new Scene(canvas, Attributes.width, Attributes.height);
     double mouseX;
     double mouseY;
+    CalabashClient calabashClient=new CalabashClient(this);
     Battle battle=new Battle();
-
+    ArrayList<Label> labels=new ArrayList<>();
     @Override
     public void init() throws Exception{
         Attributes.init();
@@ -52,7 +57,7 @@ public class Main extends Application {
         startLabel.setMaxSize(200,100);
         startLabel.setLayoutX(550);
         startLabel.setLayoutY(550);
-        startLabel.setOnMouseClicked((MouseEvent e)->{ enterBattle(); });
+        startLabel.setOnMouseClicked((MouseEvent e)->{ waitStart(); });
         canvas.getChildren().add(startLabel);
         //退出按钮
         /*canvas.setOnMousePressed((MouseEvent e)->{
@@ -61,8 +66,8 @@ public class Main extends Application {
             System.out.println(mouseX);
         });*/
 
-
     }
+
 
     int xToPixel(int x){//地图格X坐标转换为像素横坐标
         return Attributes.mapLeft+x*Attributes.gridWidth;
@@ -72,16 +77,34 @@ public class Main extends Application {
         return Attributes.mapTop+y*Attributes.gridHeight;
     }
 
-    public void enterBattle() {
-        Battle battle=new Battle();
+    void moveRoleLabel(int id,int x,int y){
+        labels.get(id).setLayoutX(xToPixel(x));
+        labels.get(id).setLayoutY(yToPixel(y));
+    }
 
+    void waitStart(){//等待其他玩家进入后开局
+        ImageView start = new ImageView(Attributes.images.get(Attributes.START));
+        start.setFitHeight(Attributes.height);
+        start.setFitWidth(Attributes.width);
+        canvas.getChildren().add(start);
+        calabashClient.connect("127.0.0.1");
+        enterBattle();
+    }
+
+    public void enterBattle() {
+
+        //Battle battle=new Battle();
+        if(battle.myCamp==Camp.MONSTER)
+            battle.selected=9;
+        else
+            battle.selected=0;
         //显示地图
         ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
         map.setFitWidth(Attributes.width);
         canvas.getChildren().add(map);
 
-        //加载角色图片和血条
+        //加载角色图片
         List<ImageView> picsList=Arrays.asList(
                 new ImageView(Attributes.images.get(Attributes.CALABASH1)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH2)),
@@ -107,15 +130,19 @@ public class Main extends Application {
         for(int i=0;i<pics.size();i++){
             pics.get(i).setFitWidth(100);
             pics.get(i).setFitHeight(100);
+            //canvas.getChildren().add(pics.get(i));
         }
-        ArrayList<Label> labels=new ArrayList<>();
+        //人物的显示
         for(int i=0;i< pics.size();i++){
             Label label=new Label("",pics.get(i));
             label.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
             label.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight);
+            System.out.printf("%d,%d,%d",i,battle.roles.get(i).curX.get(),battle.roles.get(i).curY.get());
+            System.out.println();
             labels.add(label);
             canvas.getChildren().add(label);
         }
+        //血量条的显示
         for(int i=0;i< pics.size();i++){
             battle.hpbars.get(i).setBar(battle.roles.get(i));
             Label labelbar = new Label("",battle.hpbars.get(i));
@@ -137,6 +164,8 @@ public class Main extends Application {
                 String key= event.getText();
                 if (key.length()>0 && key.charAt(0)>='1' && key.charAt(0)<='9'){
                     selected=key.charAt(0)-'1';
+                    if(battle.myCamp==Camp.MONSTER)
+                        selected+=9;
                     battle.selected=selected;
                     System.out.println(selected);
                 }
@@ -158,16 +187,15 @@ public class Main extends Application {
                         System.out.println("攻击" + atkid +"血量为" + battle.roles.get(atkid).HP);
 
                 }
-                labels.get(selected).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
-                labels.get(selected).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()));
+                int x=battle.roles.get(selected).curX.get();
+                int y=battle.roles.get(selected).curY.get();
+                moveRoleLabel(selected,x,y);
                 labels.get(selected + 18).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
                 labels.get(selected + 18).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()) -3 );
-                
+                RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
+                calabashClient.send(message);
             }
         });
-
-       
-
         //响应鼠标，选中人物
         /*canvas.setOnMousePressed((MouseEvent e)->{
             mouseX = e.getSceneX();
@@ -177,6 +205,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+
         primaryStage.setTitle("Hello World");
 
         primaryStage.setScene(scene);
@@ -185,8 +214,6 @@ public class Main extends Application {
         /*ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
         map.setFitWidth(Attributes.width);
-
-
         //canvas.setPrefSize(500,200);
         canvas.getChildren().add(map);*/
 
@@ -214,3 +241,4 @@ public class Main extends Application {
         launch(args);
     }
 }
+
