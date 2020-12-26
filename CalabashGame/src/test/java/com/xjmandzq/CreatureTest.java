@@ -7,5 +7,9 @@ import org.junit.Test;
 
 
 public class CreatureTest{
-    
+    @Test
+    public void shouldAnswerWithTrue()
+    {
+        assertTrue( true );
+    }
 }

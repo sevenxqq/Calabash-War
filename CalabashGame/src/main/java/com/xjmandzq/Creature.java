@@ -203,9 +203,8 @@ public class Creature {
             this.HP-=lost;
             battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
             System.out.println(this.id + "被攻击" + this.HP);
-            if (HP<=0){ //死亡后，地图上格子设为空，！！！确定人物已经消失不再展示了吗？要不要放置墓碑？）
+            if (HP<=0){ //死亡后，地图上格子仍然被占用，！！！确定人物已经消失不再展示了吗？要不要放置墓碑？）
                 this.alive = false; 
-                battle.map[curY.get() * Attributes.gridNumX + curX.get()] = -1;
                 System.out.println("todo:人物死亡移除图片成墓碑");
             }
         }

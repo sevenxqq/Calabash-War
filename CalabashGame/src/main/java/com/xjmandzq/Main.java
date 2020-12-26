@@ -79,8 +79,8 @@ public class Main extends Application {
     void moveRoleLabel(int id,int x,int y){
         labels.get(id).setLayoutX(xToPixel(x));
         labels.get(id).setLayoutY(yToPixel(y));
-        labels.get(id + Attributes.creatureNum).setLayoutX(xToPixel(x));
-        labels.get(id + Attributes.creatureNum).setLayoutY(yToPixel(y-3));
+        labels.get(id + Attributes.hpoffset).setLayoutX(xToPixel(x));
+        labels.get(id + Attributes.hpoffset).setLayoutY(yToPixel(y));
     }
 
     void waitStart(){//等待其他玩家进入后开局
@@ -124,7 +124,26 @@ public class Main extends Application {
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION))
+                new ImageView(Attributes.images.get(Attributes.MINION)),
+                //18
+                new ImageView(Attributes.images.get(Attributes.DEADBRO1)),
+                new ImageView(Attributes.images.get(Attributes.DEADBRO2)),
+                new ImageView(Attributes.images.get(Attributes.DEADBRO3)),
+                new ImageView(Attributes.images.get(Attributes.DEADBRO4)),
+                new ImageView(Attributes.images.get(Attributes.DEADBRO5)),
+                new ImageView(Attributes.images.get(Attributes.DEADBRO6)),
+                new ImageView(Attributes.images.get(Attributes.DEADBRO7)),
+                new ImageView(Attributes.images.get(Attributes.DEADGRANDPA)),
+                new ImageView(Attributes.images.get(Attributes.DEADPANGOLIN)),
+                new ImageView(Attributes.images.get(Attributes.DEADSCORPION)),
+                new ImageView(Attributes.images.get(Attributes.DEADSNAKE)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION)),
+                new ImageView(Attributes.images.get(Attributes.DEADMINION))      
         );
         ArrayList<ImageView> pics=new ArrayList<>();
         pics.addAll(picsList);
@@ -184,8 +203,10 @@ public class Main extends Application {
                     if (atkid!=-1){
                         System.out.println("攻击" + atkid +"血量为" + battle.roles.get(atkid).HP);
                         if (battle.roles.get(atkid).alive == false){
-                            Image image = new Image(getClass().getResourceAsStream("labels.jpg"));
-                            labels.get(selected).setGraphic(new ImageView(image));
+                           ImageView iv =  picsList.get(atkid + Attributes.deadoffset);
+                           iv.setFitHeight(Attributes.gridHeight);
+                           iv.setFitWidth(Attributes.gridWidth);
+                           labels.get(atkid).setGraphic(iv);
                         }
                     }
                     
@@ -203,7 +224,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Calabash VS Monster");
 
         primaryStage.setScene(scene);
         primaryStage.show();

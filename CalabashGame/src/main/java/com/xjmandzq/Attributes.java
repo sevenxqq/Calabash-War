@@ -18,7 +18,8 @@ public final class Attributes{
     public static final int mapRight=1110;//地图右边界（像素级）
     public static final int mapBottom=590;//地图下边界（像素级）
     public static final int rolesNum=9;//角色数量
-    public static final int creatureNum = 18;//双方生物总数
+    public static final int hpoffset = 18;//角色id图片到血条图片的偏移
+    public static final int deadoffset = 18;
 
     //图片编号
     public static final int MAP = 0;
@@ -37,6 +38,20 @@ public final class Attributes{
     public static final int SNAKE = 13;
     public static final int SCORPION = 14;
     public static final int MINION = 15;
+    //
+    public static final int DEADBRO1 = 16;
+    public static final int DEADBRO2 = 17;
+    public static final int DEADBRO3 = 18;
+    public static final int DEADBRO4 = 19;
+    public static final int DEADBRO5 = 20;
+    public static final int DEADBRO6 = 21;
+    public static final int DEADBRO7 = 22;
+    public static final int DEADGRANDPA = 23;
+    public static final int DEADPANGOLIN = 24;
+    public static final int DEADSNAKE = 25;
+    public static final int DEADSCORPION = 26;
+    public static final int DEADMINION = 27;
+
   
     //
     public static void init(){
@@ -51,11 +66,24 @@ public final class Attributes{
         images.add(new Image("brother4.PNG"));
         images.add(new Image("brother5.PNG"));
         images.add(new Image("brother6.PNG"));
-        images.add(new Image("brother7.PNG"));
+        images.add(new Image("brother7.PNG"));//10
         images.add(new Image("grandpa.PNG"));
         images.add(new Image("pangolin.jpeg"));
         images.add(new Image("snake.PNG"));
         images.add(new Image("scorpion.PNG"));
-        images.add(new Image("minion.PNG"));
+        images.add(new Image("minion.PNG"));//15
+        images.add(new Image("deadbro1.png"));
+        images.add(new Image("deadbro2.png"));
+        images.add(new Image("deadbro3.png"));
+        images.add(new Image("deadbro4.png"));
+        images.add(new Image("deadbro5.png"));
+        images.add(new Image("deadbro6.png"));
+        images.add(new Image("deadbro7.png"));
+        images.add(new Image("deadgrandpa.png"));
+        images.add(new Image("deadpangolin.png"));
+        images.add(new Image("deadsnake.png"));
+        images.add(new Image("deadscorpion.png"));
+        images.add(new Image("deadminion.png"));
+       
     }
 }
