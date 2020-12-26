@@ -18,7 +18,7 @@ public final class Attributes{
     public static final int mapRight=1110;//地图右边界（像素级）
     public static final int mapBottom=590;//地图下边界（像素级）
     public static final int rolesNum=9;//角色数量
-    public static final int hpoffset = 18;//角色id图片到血条图片的偏移
+    public static final int hpoffset = 18;//角色id到血条的偏移
     public static final int deadoffset = 18;
 
     //图片编号
@@ -80,7 +80,7 @@ public final class Attributes{
         images.add(new Image("deadbro6.png"));
         images.add(new Image("deadbro7.png"));
         images.add(new Image("deadgrandpa.png"));
-        images.add(new Image("deadpangolin.png"));
+        images.add(new Image("deadpangolin.jpeg"));
         images.add(new Image("deadsnake.png"));
         images.add(new Image("deadscorpion.png"));
         images.add(new Image("deadminion.png"));

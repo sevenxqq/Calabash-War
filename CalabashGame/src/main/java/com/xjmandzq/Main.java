@@ -125,7 +125,7 @@ public class Main extends Application {
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION)),
-                //18
+                //18,不加入新的label,用于替换
                 new ImageView(Attributes.images.get(Attributes.DEADBRO1)),
                 new ImageView(Attributes.images.get(Attributes.DEADBRO2)),
                 new ImageView(Attributes.images.get(Attributes.DEADBRO3)),
@@ -147,13 +147,13 @@ public class Main extends Application {
         );
         ArrayList<ImageView> pics=new ArrayList<>();
         pics.addAll(picsList);
-        for(int i=0;i<pics.size();i++){
+        for(int i=0;i<2*Attributes.rolesNum;i++){
             pics.get(i).setFitWidth(100);
             pics.get(i).setFitHeight(100);
            
         }
         //人物的显示
-        for(int i=0;i< pics.size();i++){
+        for(int i=0;i< 2*Attributes.rolesNum;i++){
             Label label=new Label("",pics.get(i));
             label.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
             label.setLayoutY(Attributes.mapTop+battle.roles.get(i).curY.get()*Attributes.gridHeight);
@@ -163,7 +163,7 @@ public class Main extends Application {
             canvas.getChildren().add(label);
         }
         //血量条的显示
-        for(int i=0;i< pics.size();i++){
+        for(int i=0;i< 2*Attributes.rolesNum;i++){
             battle.hpbars.get(i).setBar(battle.roles.get(i));
             Label labelbar = new Label("",battle.hpbars.get(i));
             labelbar.setLayoutX(Attributes.mapLeft+battle.roles.get(i).curX.get()*Attributes.gridWidth);
@@ -184,9 +184,11 @@ public class Main extends Application {
                     if(battle.myCamp==Camp.MONSTER)
                         selected+=9;
                     battle.selected=selected;
-                    System.out.println(selected);
+                    System.out.println(selected); 
                 }
-                else if (key.equals("a")) {
+                if (battle.roles.get(selected).alive==false)
+                    return;
+                if (key.equals("a")) {
                     battle.roles.get(selected).move(Direction.LEFT);
                 }
                 else if (key.equals("d")) {
@@ -198,8 +200,11 @@ public class Main extends Application {
                 else if (key.equals("s")) {
                     battle.roles.get(selected).move(Direction.DOWN);
                 }
-                else if (key.equals("j")){ //暂时设置为向右攻击
-                    int atkid = battle.roles.get(selected).useGnrAtk(Direction.RIGHT);
+                else if (key.equals("j")){ 
+                    Direction dir = Direction.RIGHT;
+                    if (battle.roles.get(selected).camp == Camp.MONSTER)
+                        dir = Direction.LEFT;
+                    int atkid = battle.roles.get(selected).useGnrAtk(dir);
                     if (atkid!=-1){
                         System.out.println("攻击" + atkid +"血量为" + battle.roles.get(atkid).HP);
                         if (battle.roles.get(atkid).alive == false){

@@ -156,6 +156,8 @@ public class Creature {
             int atkid = battle.map[Attributes.gridNumX*atky+atkx];
             if (this.camp == battle.roles.get(atkid).camp)
                 return -1;
+            if (battle.roles.get(atkid).alive == false)
+                return -1;
             battle.roles.get(atkid).beenAtked(this.gnrAtk);
             return atkid;
         }
@@ -203,29 +205,15 @@ public class Creature {
             this.HP-=lost;
             battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
             System.out.println(this.id + "被攻击" + this.HP);
-            if (HP<=0){ //死亡后，地图上格子仍然被占用，！！！确定人物已经消失不再展示了吗？要不要放置墓碑？）
+            if (HP<=0){ //死亡后，地图上格子仍然被占用！！！
                 this.alive = false; 
-                System.out.println("todo:人物死亡移除图片成墓碑");
+               
             }
         }
         public void beenHealed(int inc){
             this.HP = Math.min(HP + inc,maxHP);
         }
-        //------------------控制模块-------------
-        // @Override
-        // public void run() {
-        //     while (true) {
-        //         try {
-        //             Thread.sleep(50);
-        //         } catch (Exception e) {
-        //             e.printStackTrace();
-        //         }
-        //         cmdHandler();       
-        //     }
-        // }
-        // protected void cmdHandler() {
-            
-        // }
+       
 
 
     
