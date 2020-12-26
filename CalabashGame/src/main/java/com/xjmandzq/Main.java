@@ -79,6 +79,8 @@ public class Main extends Application {
     void moveRoleLabel(int id,int x,int y){
         labels.get(id).setLayoutX(xToPixel(x));
         labels.get(id).setLayoutY(yToPixel(y));
+        labels.get(id + Attributes.creatureNum).setLayoutX(xToPixel(x));
+        labels.get(id + Attributes.creatureNum).setLayoutY(yToPixel(y-3));
     }
 
     void waitStart(){//等待其他玩家进入后开局
@@ -179,15 +181,18 @@ public class Main extends Application {
                 }
                 else if (key.equals("j")){ //暂时设置为向右攻击
                     int atkid = battle.roles.get(selected).useGnrAtk(Direction.RIGHT);
-                    if (atkid!=-1)
+                    if (atkid!=-1){
                         System.out.println("攻击" + atkid +"血量为" + battle.roles.get(atkid).HP);
-
+                        if (battle.roles.get(atkid).alive == false){
+                            Image image = new Image(getClass().getResourceAsStream("labels.jpg"));
+                            labels.get(selected).setGraphic(new ImageView(image));
+                        }
+                    }
+                    
                 }
                 int x=battle.roles.get(selected).curX.get();
                 int y=battle.roles.get(selected).curY.get();
                 moveRoleLabel(selected,x,y);
-                labels.get(selected + 18).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
-                labels.get(selected + 18).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()) -3 );
                 RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
                 calabashClient.send(message);
             }

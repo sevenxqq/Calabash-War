@@ -131,8 +131,6 @@ public class Creature {
             //TODO:加上只能移到相邻格子的限制？
             if (x>=0 && x<Attributes.gridNumX && y>=0 && y<Attributes.gridNumY
                     && !battle.isOccupied(x,y)){
-                //移动条件：不超边界且无其他角色占用
-                //TODO:对地图的访问控制
                 battle.map[Attributes.gridNumX*curY.get()+curX.get()]=-1;//空出原位置
                 battle.map[Attributes.gridNumX*y+x]=id;//标记新位置
                 curX.set(x);
