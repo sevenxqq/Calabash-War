@@ -179,24 +179,27 @@ public class Creature {
             解释：只能向一个格子内的友方使用治愈术
             附加：后期加绿色向上数字表示加血效果
         */
-        public void useHealing(Direction dir){
+        public int useHealing(Direction dir){
             if (this.MP<=0)
-                return;
+                return -1;
             int heelx = curX.get(),heely = curY.get();
             switch(dir){
                 case UP: heely--;break;
                 case DOWN: heely++;break;
                 case LEFT:heelx--;break;
                 case RIGHT:heelx++;break;
-                default: return;
+                default: return -1;
             }
             if (battle.isOccupied(heelx,heely) == false)
-                return;
+                return -1;;
             int heelid = battle.map[Attributes.gridNumX*heely+heelx];
             if (this.camp != battle.roles.get(heelid).camp)
-                return;
-            battle.roles.get(heelid).beenHealed(this.healing);
+                return -1;
+            if (battle.roles.get(heelid).alive == false)
+                return -1;
+            battle.roles.get(heelid).beenHealed(this.healing); 
             this.MP-=this.healCost;
+            return heelid;
         }
         /*
             parm:损失血量

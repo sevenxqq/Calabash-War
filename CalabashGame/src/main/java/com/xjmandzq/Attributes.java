@@ -20,7 +20,7 @@ public final class Attributes{
     public static final int rolesNum=9;//角色数量
     public static final int hpoffset = 18;//角色id到血条的偏移
     public static final int deadoffset = 18;
-
+    
     //图片编号
     public static final int MAP = 0;
     public static final int START = 1;
