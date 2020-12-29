@@ -72,7 +72,7 @@ class RoleMoveMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
             ds.send(dp);
-            System.out.println("send");
+            System.out.println("client send");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,10 +95,12 @@ class RoleMoveMessage implements Message {
 class AttackMessage implements Message {
     private int type = Message.ATTACK;
     private int id;
+    private Direction dir;
     Main player;
 
-    public AttackMessage(int id){
+    public AttackMessage(int id,Direction dir){
         this.id = id;
+        this.dir=dir;
     }
 
     public AttackMessage(Main player){
@@ -112,6 +114,14 @@ class AttackMessage implements Message {
         try {
             out.writeInt(type);
             out.writeInt(id);
+            int dirInt=-1;
+            switch(dir){
+                case UP:dirInt=0;break;
+                case DOWN:dirInt=1;break;
+                case LEFT:dirInt=2;break;
+                case RIGHT:dirInt=3;break;
+            }
+            out.writeInt(dirInt);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,7 +129,6 @@ class AttackMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
             ds.send(dp);
-            System.out.println("send");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,6 +138,15 @@ class AttackMessage implements Message {
     public void parse(DataInputStream in) {
         try{
             int id = in.readInt();
+            int dir=in.readInt();
+            Direction direction=Direction.RIGHT;
+            switch(dir){
+                case 0:direction=Direction.UP;break;
+                case 1:direction=Direction.DOWN;break;
+                case 2:direction=Direction.LEFT;break;
+                case 3:direction=Direction.RIGHT;break;
+            }
+            player.battle.roles.get(id).useGnrAtk(direction);
         } catch (IOException e) {
             e.printStackTrace();
         }
