@@ -17,6 +17,8 @@ public final class Attributes{
     public static final int mapRight=1110;//地图右边界（像素级）
     public static final int mapBottom=590;//地图下边界（像素级）
     public static final int rolesNum=9;//角色数量
+    public static final String localServerIP="127.0.0.1";//本机测试时服务器ip地址
+    public static final String remoteServerIP="172.24.52.200";//联机测试时服务器ip地址（nju）
 
     //图片编号
     public static final int MAP = 0;

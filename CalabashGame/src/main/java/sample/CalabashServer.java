@@ -6,10 +6,7 @@ package sample;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +22,8 @@ public class CalabashServer extends Frame {
     public static int clientCount = 0;//连接的客户端数量
     public static final int TCP_PORT = 55555;//TCP端口号//TODO：端口号的约定
     public static final int UDP_PORT = 55556;//转发客户端数据的UDP端口号//TODO：端口号的约定
-    public static final int TANK_DEAD_UDP_PORT = 55557;//接收客户端坦克死亡的端口号//TODO：端口号的约定
+    public static final int NEW_PLAYER_UDP_PORT=55557;//告知新用户加入的UDP端口号
+    public static final int TANK_DEAD_UDP_PORT = 55558;//接收客户端坦克死亡的端口号//TODO：端口号的约定
     private List<Client> clients = new ArrayList<>();//客户端集合
     private Image offScreenImage = null;//服务器画布
     private static final int SERVER_HEIGHT = 500;
@@ -51,18 +49,36 @@ public class CalabashServer extends Frame {
         while(true){
             Socket clientSocket = null;
             try {
-                //TODO：对玩家数量添加限制，大于两个观战or拒绝接入
-                clientSocket = serverSocket.accept();//给客户但分配专属TCP套接字
+                //处理新连接的用户
+                clientSocket = serverSocket.accept();//给客户分配TCP套接字
                 System.out.println("A client has connected...");
                 DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-                int UDP_PORT = in.readInt();//记录客户端UDP端口//TODO：消息格式的约定（协议）
-                Client client = new Client(clientSocket.getInetAddress().getHostAddress(), UDP_PORT, clientCount);//创建Client对象
-                clients.add(client);//添加进客户端容器
-
+                int udpPort = in.readInt();//记录客户端UDP端口//TODO：消息格式的约定（协议）
                 DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+                Client client = new Client(clientSocket.getInetAddress().getHostAddress(), udpPort, clientCount);//创建Client对象
                 //TODO:要发送哪些消息？
                 out.writeInt(clientCount++);//向客户端分配id号
                 out.writeInt(CalabashServer.UDP_PORT);//告诉客户端自己的UDP端口号
+
+                //告知已连接服务器的玩家有新玩家加入，告知新玩家之前已连接的玩家
+                DatagramSocket ds = null;
+                try{
+                    ds = new DatagramSocket(NEW_PLAYER_UDP_PORT);
+                }catch (SocketException e) {
+                    e.printStackTrace();
+                }
+                NewPlayerMessage m1=new NewPlayerMessage(client.id);
+                for(Client c:clients){
+                    m1.send(ds,c.ip,c.udpPORT);
+                }
+                for(Client c:clients){
+                    NewPlayerMessage m2=new NewPlayerMessage(c.id);
+                    m2.send(ds,client.ip,client.udpPORT);
+                }
+                ds.close();
+
+                //客户端数量++
+                clients.add(client);//添加进客户端容器
 
                 //out.writeInt(CalabashServer.TANK_DEAD_UDP_PORT);
             }catch (IOException e) {
@@ -94,8 +110,17 @@ public class CalabashServer extends Frame {
                 DatagramPacket dp = new DatagramPacket(buf, buf.length);
                 try {
                     ds.receive(dp);
-                    System.out.println("receive");
+                    String addr=dp.getAddress().getHostName();
+                    int port=dp.getPort();
+                    //System.out.println(addr);
+                    //System.out.println(port);
+                    //System.out.println("server receive");
                     for (Client c : clients){
+                        /*
+                        if(addr!=c.ip&&port!=c.udpPORT){
+                            dp.setSocketAddress(new InetSocketAddress(c.ip, c.udpPORT));
+                            ds.send(dp);
+                        }*/
                         dp.setSocketAddress(new InetSocketAddress(c.ip, c.udpPORT));
                         ds.send(dp);
                     }
@@ -105,6 +130,8 @@ public class CalabashServer extends Frame {
             }
         }
     }
+
+
 
     /**
      * 监听坦克死亡的UDP线程

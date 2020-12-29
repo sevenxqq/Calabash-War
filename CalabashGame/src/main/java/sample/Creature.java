@@ -59,10 +59,11 @@ public class Creature implements Runnable{
     int healCost;
 
 //构造器-----------------------------------------//
-    Creature(int id,String name,Battle battle){
+    Creature(int id,String name,Battle battle,Camp camp){
         this.id=id;
         this.cname=name;
         this.battle=battle;
+        this.camp=camp;
         HP=maxHP;
         MP=maxMP;
     }
@@ -111,8 +112,8 @@ public class Creature implements Runnable{
         if (battle.isOccupied(atkx,atky) == false)
             return -1;
         int atkid = battle.map[Attributes.gridNumX*atky+atkx];
-        //if (this.camp == battle.roles.get(atkid).camp)
-        //    return -1;
+        if (this.camp == battle.roles.get(atkid).camp)
+            return -1;
         battle.roles.get(atkid).beenAtked(this.gnrAtk);
         return atkid;
     }
