@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Calabash-VS-Monster>
+    <createtime>2020-12-28 11:08:22</createtime>
+    <battle>
+        <move ChatId="3" dir="UP">3 move UP</move>
+        <gnrAtk ChatId="4" dir="DOWN">4 use genAtk and the dir is DOWN</gnrAtk>
+        <heel ChatId="5" dir="RIGHT">5 use heeling and the dir is RIGHT</heel>
+    </battle>
+</Calabash-VS-Monster>

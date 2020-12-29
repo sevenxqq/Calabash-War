@@ -86,7 +86,7 @@ class XMLFile {
         String [] arr = str.split("\\s+"); 
         move.setAttribute("ChatId",arr[0]);
         move.setAttribute("dir",arr[1]);
-        Text m=dcmt.createTextNode("" + arr[0] +" move " + arr[1]);
+        Text m=dcmt.createTextNode("role" + arr[0] +" move " + arr[1]);
         move.appendChild(m);
         battle.appendChild(move);
     }
@@ -96,7 +96,7 @@ class XMLFile {
         String [] arr = str.split("\\s+"); 
         gnrAtk.setAttribute("ChatId",arr[0]);
         gnrAtk.setAttribute("dir",arr[1]);
-        Text m=dcmt.createTextNode("" + arr[0] +" use genAtk and the dir is " + arr[1]);
+        Text m=dcmt.createTextNode("role" + arr[0] +" use genAtk and the dir is " + arr[1]);
         gnrAtk.appendChild(m);
         battle.appendChild(gnrAtk);
     }
@@ -106,7 +106,7 @@ class XMLFile {
         String [] arr = str.split("\\s+"); 
         heel.setAttribute("ChatId",arr[0]);
         heel.setAttribute("dir",arr[1]);
-        Text m=dcmt.createTextNode("" + arr[0] +" use heeling and the dir is " + arr[1]);
+        Text m=dcmt.createTextNode("role" + arr[0] +" use heeling and the dir is " + arr[1]);
         heel.appendChild(m);
         battle.appendChild(heel);
     }

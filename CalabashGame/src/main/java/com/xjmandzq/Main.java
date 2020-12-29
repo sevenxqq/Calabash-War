@@ -220,6 +220,7 @@ public class Main extends Application {
                 int y=battle.roles.get(selected).curY.get();
                 moveRoleLabel(selected,x,y);
                 RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
+                battle.gameprogress.writeIn(ActionType.MOVE, "3 up");//传消息传方向还是目的地
                 calabashClient.send(message);
             }
         });
