@@ -8,9 +8,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import javafx.scene.image.ImageView;
 
-class Playback  {
+class Playback  implements Runnable{
 
     String filepath;
     private Document docs;
@@ -42,6 +43,7 @@ class Playback  {
     public void parse() throws InterruptedException {
         if(docs==null)
             return;
+       
         NodeList rounds = fileroot.getChildNodes();
         for (int i = 1; i < rounds.getLength(); i++) {
             NodeList battle = rounds.item(i).getChildNodes();
@@ -63,8 +65,11 @@ class Playback  {
                     default:
                         break;
                 }
-              
-                Thread.sleep(1000);
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -73,8 +78,9 @@ class Playback  {
         int Chatid = Integer.parseInt(action.getAttributes().getNamedItem("ChatId").getNodeValue());
         int x = Integer.parseInt(action.getAttributes().getNamedItem("x").getNodeValue());
         int y = Integer.parseInt(action.getAttributes().getNamedItem("y").getNodeValue());
-        play.battle.roles.get(Chatid).move(x, y);
-        play.moveRoleLabel(Chatid, x, y);
+        boolean canmove = play.battle.roles.get(Chatid).move(x, y);
+        if (canmove)
+            play.moveRoleLabel(Chatid, x, y);
     }
 
     private void parseGnrAtk(Node action) {
@@ -136,16 +142,16 @@ class Playback  {
 
     }
 
-    // @Override
-    // public void run() {
-    //     System.out.println("begin playback!");
-    //     try {
-    //         parse();
-    //         System.out.println("playback done!");
-    //     } catch (InterruptedException e) {
-    //         e.printStackTrace();
-    //     }
+    @Override
+    public void run() {
+        System.out.println("begin playback!");
+        try {
+            parse();
+            System.out.println("playback done!");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-    // }
+    }
 
 }

@@ -117,13 +117,13 @@ public class Main extends Application {
         if (file != null) {
             decorateStage();
             Playback autoplay = new Playback(file.getPath(), this);
-            autoplay.parse();
+            new Thread(autoplay).start();
         }
         // 回放完成后是否回到主界面
 
     }
 
-    List<ImageView> decorateStage() {
+    void decorateStage() {
         // 显示地图
         ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
@@ -194,8 +194,8 @@ public class Main extends Application {
             labels.add(labelbar);
             canvas.getChildren().add(labelbar);
         }
+        System.out.println("show 地图");
 
-        return picsList;
     }
 
     public void enterBattle() {
@@ -261,7 +261,7 @@ public class Main extends Application {
                     if (battle.roles.get(selected).healer == false) {
                         int atkid = battle.roles.get(selected).useGnrAtk(dir);
                         AttackMessage message = new AttackMessage(selected, dir);
-                        battle.gameprogress.writeIn(ActionType.GNRATK, selected + battle.dir2str(dir));
+                        battle.gameprogress.writeIn(ActionType.GNRATK, selected + " " + battle.dir2str(dir));
                         calabashClient.send(message);
                         if (atkid != -1) {
                             System.out.println("攻击" + atkid + "血量为" + battle.roles.get(atkid).HP);

@@ -127,15 +127,16 @@ public class Creature {
                 default: return;
             }
         }
-        public void move(int x,int y){//移动到[x,y]
-            //TODO:加上只能移到相邻格子的限制？
+        public boolean move(int x,int y){//移动到[x,y]
             if (x>=0 && x<Attributes.gridNumX && y>=0 && y<Attributes.gridNumY
                     && !battle.isOccupied(x,y)){
                 battle.map[Attributes.gridNumX*curY.get()+curX.get()]=-1;//空出原位置
                 battle.map[Attributes.gridNumX*y+x]=id;//标记新位置
                 curX.set(x);
                 curY.set(y);
+                return true;
             }
+            return false;
         }
         /*
             parm:攻击方向
