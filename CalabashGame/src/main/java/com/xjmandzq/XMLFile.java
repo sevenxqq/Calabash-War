@@ -79,7 +79,7 @@ class XMLFile {
         switch(atype){
             case MOVE: writeInMove(str); break;
             case GNRATK: writeInGnrAtk(str); break;
-            case HEEL: writeInHeel(str); break;
+            case HEAL: writeInHeel(str); break;
             default:break;
         }
     }
@@ -118,9 +118,18 @@ class XMLFile {
 
     public static void main(String []args) throws Exception{
         XMLFile test=new XMLFile();
-        test.writeIn(ActionType.MOVE, "3 5 6");
+        test.writeIn(ActionType.MOVE, "3 5 1");
+        test.writeIn(ActionType.MOVE, "7 6 2");
+        test.writeIn(ActionType.MOVE, "9 7 3");
+        test.writeIn(ActionType.MOVE, "11 8 4");
+        test.writeIn(ActionType.MOVE, "13 1 1");
+        test.writeIn(ActionType.MOVE, "15 2 2");
+        test.writeIn(ActionType.MOVE, "17 3 3");
         test.writeIn(ActionType.GNRATK, "4 DOWN");
-        test.writeIn(ActionType.HEEL, "5 RIGHT");
+        test.writeIn(ActionType.GNRATK, "11 UP");
+        test.writeIn(ActionType.GNRATK, "8 LEFT");
+        test.writeIn(ActionType.GNRATK, "10 RIGHT");
+        // test.writeIn(ActionType.HEAL, "5 RIGHT");
         test.saveFile();
     }
 

@@ -26,6 +26,8 @@ public final class Attributes{
     public static final int START = 1;
     public static final int STARTICON = 2;
     public static final int EXITICON = 3;
+    public static final int LOADICON = 28;
+    //角色
     public static final int CALABASH1 = 4;
     public static final int CALABASH2 = 5;
     public static final int CALABASH3 = 6;
@@ -84,6 +86,8 @@ public final class Attributes{
         images.add(new Image("deadsnake.png"));
         images.add(new Image("deadscorpion.png"));
         images.add(new Image("deadminion.png"));
+        images.add(new Image("load.PNG"));
+
        
     }
 }

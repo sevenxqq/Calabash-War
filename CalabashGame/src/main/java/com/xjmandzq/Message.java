@@ -47,6 +47,7 @@ class RoleMoveMessage implements Message {
     private int type = Message.ROLE_MOVE;
     private int id;
     private int x, y;
+   
     Main player;
 
     public RoleMoveMessage(int id, int x, int y){
@@ -54,6 +55,7 @@ class RoleMoveMessage implements Message {
         this.x = x;
         this.y = y;
     }
+
 
     public RoleMoveMessage(Main player){
         this.player=player;
@@ -89,6 +91,7 @@ class RoleMoveMessage implements Message {
             int y = in.readInt();
             player.battle.roles.get(id).move(x,y);
             player.moveRoleLabel(id,x,y);
+            player.battle.gameprogress.writeIn(ActionType.MOVE, id + " " + x +" "+y);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -150,6 +153,7 @@ class AttackMessage implements Message {
                 case 3:direction=Direction.RIGHT;break;
             }
             player.battle.roles.get(id).useGnrAtk(direction);
+            player.battle.gameprogress.writeIn(ActionType.GNRATK, id+ player.battle.dir2str(direction));
         } catch (IOException e) {
             e.printStackTrace();
         }
