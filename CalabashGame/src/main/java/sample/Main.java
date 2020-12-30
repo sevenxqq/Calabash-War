@@ -39,16 +39,19 @@ import javafx.stage.StageStyle;
 
 public class Main extends Application {
     int myID;//自己的id
+    int matchPlayerID=-1;//想匹配的玩家ID
     int enemyID=-1;//
     boolean started=false;
-    static String serverIP;//服务器ip地址
+    String serverIP;//服务器ip地址
     List<Player> players=new ArrayList<>();//当前与服务器连接的可匹配玩家
 
     Pane canvas=new Pane();//
     Scene scene=new Scene(canvas, Attributes.width, Attributes.height);//
+    ArrayList<ImageView> pics=new ArrayList<>();
+    ArrayList<ImageView> picsDead=new ArrayList<>();
     double mouseX;
     double mouseY;
-    CalabashClient calabashClient=new CalabashClient(this);//客户端
+    CalabashClient calabashClient;//客户端
     Battle battle=new Battle();//一场对局
     ArrayList<Label> labels=new ArrayList<>();//???
     @Override
@@ -72,7 +75,8 @@ public class Main extends Application {
         Optional<String> result = dialog.showAndWait();
         if (result.isPresent()){
             serverIP=result.get();
-            if(calabashClient.connect(Attributes.localServerIP)){
+            calabashClient=new CalabashClient(this);//客户端
+            if(calabashClient.connect(serverIP)){
                 startInterface();
             }
             else{
@@ -134,7 +138,7 @@ public class Main extends Application {
         dialog.setHeaderText("选择当前在线玩家进行战斗吧！若想刷新新玩家请点击“取消”后再按“START“");
         dialog.setContentText("请选择想匹配的玩家id：");
         Optional<String> result = dialog.showAndWait();
-        int matchPlayerID=-1;
+
         if (result.isPresent() && result.get()!="--"){
             matchPlayerID=Integer.parseInt(result.get());
             InviteMessage message=new InviteMessage(myID,matchPlayerID);
@@ -161,15 +165,25 @@ public class Main extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
             enemyID=playerID;
+            battle.setCamp(Camp.MONSTER);
             started=true;
             enterBattle();
             ReplyMessage r=new ReplyMessage(myID,playerID,1);
             calabashClient.send(r);
+
         } else {
             ReplyMessage r=new ReplyMessage(myID,playerID,0);
             calabashClient.send(r);
         }
 
+    }
+
+    void invitationRefused(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("匹配失败");
+        alert.setHeaderText(null);
+        alert.setContentText("玩家"+Integer.toString(matchPlayerID)+"拒绝了您的邀请，请重新匹配！");
+        alert.showAndWait();
     }
 
     int xToPixel(int x){//地图格X坐标转换为像素横坐标
@@ -231,11 +245,36 @@ public class Main extends Application {
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION))
         );
-        ArrayList<ImageView> pics=new ArrayList<>();
+
         pics.addAll(picsList);
+
+        List<ImageView> picsListDead=Arrays.asList(
+                new ImageView(Attributes.images.get(Attributes.CALABASH1_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH2_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH3_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH4_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH5_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH6_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH7_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.GRANDPA_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.PANGOLIN_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.SCORPION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.SNAKE_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD))
+        );
+        //ArrayList<ImageView> picsDead=new ArrayList<>();
+        picsDead.addAll(picsListDead);
         for(int i=0;i<pics.size();i++){
             pics.get(i).setFitWidth(100);
             pics.get(i).setFitHeight(100);
+            picsDead.get(i).setFitHeight(100);
+            picsDead.get(i).setFitWidth(100);
             //canvas.getChildren().add(pics.get(i));
         }
         //人物的显示
@@ -296,8 +335,15 @@ public class Main extends Application {
                     int atkid = battle.roles.get(selected).useGnrAtk(dir);
                     if (atkid!=-1) {
                         System.out.println("攻击" + atkid + "血量为" + battle.roles.get(atkid).HP);
-                        AttackMessage message = new AttackMessage(selected,dir);
+                        AttackMessage message = new AttackMessage(enemyID,selected,dir);
                         calabashClient.send(message);
+                        if(battle.roles.get(atkid).HP<=0){//人物生命值耗尽
+                            battle.enemyDeadCount++;
+                            setDead(atkid);
+                            if(battle.enemyDeadCount==Attributes.rolesNum){
+                                gameOver(true);
+                            }
+                        }
                     }
                 }
                 int x=battle.roles.get(selected).curX.get();
@@ -305,7 +351,7 @@ public class Main extends Application {
                 moveRoleLabel(selected,x,y);
                 labels.get(selected + 18).setLayoutX(xToPixel(battle.roles.get(selected).curX.get()));
                 labels.get(selected + 18).setLayoutY(yToPixel(battle.roles.get(selected).curY.get()) -3 );
-                RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
+                RoleMoveMessage message=new RoleMoveMessage(enemyID,selected,x,y);
                 calabashClient.send(message);
             }
         });
@@ -314,6 +360,25 @@ public class Main extends Application {
             mouseX = e.getSceneX();
             mouseY = e.getSceneY();
         });*/
+    }
+
+    //step3-3:游戏结束
+    void gameOver(boolean winFlag){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("对战结果");
+        alert.setHeaderText(null);
+        if(winFlag){
+            alert.setContentText("恭喜您，取得胜利!");
+        }
+        else{
+            alert.setContentText("很遗憾，对局失败...");
+        }
+        alert.showAndWait();
+        matchPlayer();
+    }
+
+    void setDead(int roleID){
+        labels.get(roleID).setGraphic(picsDead.get(roleID));
     }
     @Override
     public void start(Stage primaryStage) throws Exception{

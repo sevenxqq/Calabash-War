@@ -47,11 +47,13 @@ public interface Message {
  */
 class RoleMoveMessage implements Message {
     private int type = Message.ROLE_MOVE;
+    private int targetClientID;
     private int id;
     private int x, y;
     Main player;
 
-    public RoleMoveMessage(int id, int x, int y){
+    public RoleMoveMessage(int targetClientID,int id, int x, int y){
+        this.targetClientID=targetClientID;
         this.id = id;
         this.x = x;
         this.y = y;
@@ -67,6 +69,7 @@ class RoleMoveMessage implements Message {
         DataOutputStream out = new DataOutputStream(bout);
         try {
             out.writeInt(type);
+            out.writeInt(targetClientID);
             out.writeInt(id);
             out.writeInt(x);
             out.writeInt(y);
@@ -86,11 +89,14 @@ class RoleMoveMessage implements Message {
     @Override
     public void parse(DataInputStream in) {
         try{
+            int targetClientID=in.readInt();
             int id = in.readInt();
             int x = in.readInt();
             int y = in.readInt();
-            player.battle.roles.get(id).move(x,y);
-            player.moveRoleLabel(id,x,y);
+            if(targetClientID==player.myID){
+                player.battle.roles.get(id).move(x,y);
+                player.moveRoleLabel(id,x,y);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,11 +105,13 @@ class RoleMoveMessage implements Message {
 
 class AttackMessage implements Message {
     private int type = Message.ATTACK;
+    private int targetClientID;
     private int id;
     private Direction dir;
     Main player;
 
-    public AttackMessage(int id,Direction dir){
+    public AttackMessage(int targetClientID,int id,Direction dir){
+        this.targetClientID=targetClientID;
         this.id = id;
         this.dir=dir;
     }
@@ -118,6 +126,7 @@ class AttackMessage implements Message {
         DataOutputStream out = new DataOutputStream(bout);
         try {
             out.writeInt(type);
+            out.writeInt(targetClientID);
             out.writeInt(id);
             int dirInt=-1;
             switch(dir){
@@ -142,16 +151,31 @@ class AttackMessage implements Message {
     @Override
     public void parse(DataInputStream in) {
         try{
+            int targetClientID=in.readInt();
             int id = in.readInt();
             int dir=in.readInt();
-            Direction direction=Direction.RIGHT;
-            switch(dir){
-                case 0:direction=Direction.UP;break;
-                case 1:direction=Direction.DOWN;break;
-                case 2:direction=Direction.LEFT;break;
-                case 3:direction=Direction.RIGHT;break;
+            if(targetClientID==player.myID){
+                Direction direction=Direction.RIGHT;
+                switch(dir){
+                    case 0:direction=Direction.UP;break;
+                    case 1:direction=Direction.DOWN;break;
+                    case 2:direction=Direction.LEFT;break;
+                    case 3:direction=Direction.RIGHT;break;
+                }
+                int atkid=player.battle.roles.get(id).useGnrAtk(direction);
+                System.out.println("HP:"+player.battle.roles.get(atkid).HP);
+                if(player.battle.roles.get(atkid).HP<=0){
+                    player.battle.myDeadCount++;
+                    Platform.runLater(()->{
+                        player.setDead(atkid);
+                    });
+                    if(player.battle.myDeadCount==Attributes.rolesNum){
+                        Platform.runLater(()->{
+                            player.gameOver(false);
+                        });
+                    }
+                }
             }
-            player.battle.roles.get(id).useGnrAtk(direction);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -315,13 +339,17 @@ class ReplyMessage implements Message {
                 System.out.println(r);
                 if(r==1){//对方同意邀请
                     player.enemyID=id1;
+                    player.battle.setCamp(Camp.CALABASH);
                     player.started=true;
+
                     Platform.runLater(()->{
                         player.enterBattle();
                     });
                 }
                 else{
-                    ;//TODO
+                    Platform.runLater(()->{
+                        player.invitationRefused();
+                    });
                 }
             }
             //player.battle.enemyId=id;

@@ -26,6 +26,7 @@ public class CalabashClient {
 
     public CalabashClient(Main player){
         this.player = player;
+        this.serverIP=player.serverIP;
         try {
             this.UDP_PORT = getRandomUDPPort();
         }catch (Exception e){
@@ -60,15 +61,8 @@ public class CalabashClient {
             int id = in.readInt();//获得自己的id号//TODO
             player.myID=id;
             this.serverUDPPort = in.readInt();//获得服务器转发客户端消息的UDP端口号//TODO
-            if(id==0) {
-                player.battle.setCamp(Camp.CALABASH);
-            }
-            else if(id==1) {
-                player.battle.setCamp(Camp.MONSTER);
-            }
-            else
-                player.battle.setCamp(Camp.BYSTANDER);
-            player.battle.setCamp((id%2==0)?Camp.CALABASH:Camp.MONSTER);
+
+
             //this.TANK_DEAD_UDP_PORT = in.readInt();//获得服务器监听坦克死亡的UDP端口//TODO
             //tc.getMyTank().setId(id);//设置坦克的id号
             //tc.getMyTank().setGood((id & 1) == 0 ? true : false);//根据坦克的id号分配阵营

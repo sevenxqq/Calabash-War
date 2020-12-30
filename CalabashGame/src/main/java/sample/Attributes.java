@@ -37,28 +37,22 @@ public final class Attributes{
     public static final int SNAKE = 13;
     public static final int SCORPION = 14;
     public static final int MINION = 15;
-    /*
-    public static final int STARTPOSX = 15;
-    public static final int STARTPOSY = 16;
+    public static final int CALABASH1_DEAD = 16;
+    public static final int CALABASH2_DEAD = 17;
+    public static final int CALABASH3_DEAD = 18;
+    public static final int CALABASH4_DEAD = 19;
+    public static final int CALABASH5_DEAD = 20;
+    public static final int CALABASH6_DEAD = 21;
+    public static final int CALABASH7_DEAD = 22;
+    public static final int GRANDPA_DEAD = 23;
+    public static final int PANGOLIN_DEAD = 24;
+    public static final int SNAKE_DEAD = 25;
+    public static final int SCORPION_DEAD = 26;
+    public static final int MINION_DEAD = 27;
 
-    public static final int INDEX_MONSTERHEAD = 17;
-    public static final int INDEX_HUMANCABIN = 18;
-    public static final int INDEX_MONSTERCAVE = 19;
-    public static final int INDEX_PREPAREGACKGROUND = 20;
-    public static final int INDEX_HUMANHEAD2 = 21;
-    public static final int INDEX_MONSTERHEAD2 = 22;
-    public static final int INDEX_TWOPLAYER = 23;
-    public static final int INDEX_AUTOPLAY = 24;
-    public static final int INDEX_TWOPLAYER2 = 25;
-    public static final int INDEX_AUTOPLAY2 = 26;
-    public static final int INDEX_BATTLEFIELD = 27;
-    public static final int INDEX_B_ATTACK12 = 28;
-    public static final int INDEX_B_ATTACK22 = 29;
-    public static final int INDEX_B_ATTACK32 = 30;
-     */
     //
     public static void init(){
-        //添加图片
+        //添加角色图片
         images.add(new Image("map.jpg"));
         images.add(new Image("start.jpg"));
         images.add(new Image("start_game.png"));
@@ -75,5 +69,18 @@ public final class Attributes{
         images.add(new Image("snake.PNG"));
         images.add(new Image("scorpion.PNG"));
         images.add(new Image("minion.PNG"));
+        //添加角色死亡图片
+        images.add(new Image("brother1_dead.png"));
+        images.add(new Image("brother2_dead.png"));
+        images.add(new Image("brother3_dead.png"));
+        images.add(new Image("brother4_dead.png"));
+        images.add(new Image("brother5_dead.png"));
+        images.add(new Image("brother6_dead.png"));
+        images.add(new Image("brother7_dead.png"));
+        images.add(new Image("grandpa_dead.png"));
+        images.add(new Image("pangolin_dead.jpg"));
+        images.add(new Image("snake_dead.png"));
+        images.add(new Image("scorpion_dead.png"));
+        images.add(new Image("minion_dead.png"));
     }
 }

@@ -168,6 +168,7 @@ public class Creature implements Runnable{
             this.alive = false;
             battle.map[curY.get() * Attributes.gridNumX + curX.get()] = -1;
             System.out.println("todo:人物死亡移除图片成墓碑");
+
         }
     }
     public void beenHealed(int inc){
