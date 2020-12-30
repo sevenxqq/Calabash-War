@@ -64,4 +64,14 @@ public class Battle{
     public boolean isOccupied(int x,int y){//判断地图[x,y]位置是否被角色占用
         return map[y*Attributes.gridNumX+x]!=-1;
     }
+
+    public String dir2str(Direction dir){
+        switch(dir){
+            case LEFT: return "LEFT";
+            case RIGHT: return "RIGHT";
+            case UP: return "UP";
+            case DOWN: return "DOWN";
+            default:return "";
+        }
+    }
 }

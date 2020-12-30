@@ -65,6 +65,19 @@ public class Main extends Application {
             System.out.println(mouseX);
         });*/
 
+        // ImageView saveimg = new ImageView(Configs.SysIcons.get(Configs.INDEX_SAVE));
+        // saveimg.setFitWidth(Configs.B_SIZE/2.0);
+        // saveimg.setFitHeight(Configs.B_SIZE/2.0);
+        // save = new Label("", saveimg);
+        // save.setLayoutX(Configs.WIN_WIDTH - Configs.B_SIZE*1.5);
+        // save.setOnMouseClicked((MouseEvent)->{
+        //     FileChooser chooser = new FileChooser();
+        //     File file = chooser.showSaveDialog(stage);
+        //     if(file!=null)
+        //         manager.savestack.saveToFile(file.getPath()+".xml");
+        // });
+        // pane.getChildren().add(save);
+
     }
 
 
@@ -190,21 +203,48 @@ public class Main extends Application {
                     return;
                 if (key.equals("a")) {
                     battle.roles.get(selected).move(Direction.LEFT);
+                    int x=battle.roles.get(selected).curX.get();
+                    int y=battle.roles.get(selected).curY.get();
+                    moveRoleLabel(selected,x,y);
+                    RoleMoveMessage message=new RoleMoveMessage(selected,x,y); //怎么把main类传过去
+                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x +" "+y);
+                    calabashClient.send(message);
                 }
                 else if (key.equals("d")) {
                     battle.roles.get(selected).move(Direction.RIGHT);
+                    int x=battle.roles.get(selected).curX.get();
+                    int y=battle.roles.get(selected).curY.get();
+                    moveRoleLabel(selected,x,y);
+                    RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
+                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x +" "+y);
+                    calabashClient.send(message);
                 }
                 else if (key.equals("w")) {
                     battle.roles.get(selected).move(Direction.UP);
+                    int x=battle.roles.get(selected).curX.get();
+                    int y=battle.roles.get(selected).curY.get();
+                    moveRoleLabel(selected,x,y);
+                    RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
+                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x +" "+y);
+                    calabashClient.send(message);
                 }
                 else if (key.equals("s")) {
                     battle.roles.get(selected).move(Direction.DOWN);
+                    int x=battle.roles.get(selected).curX.get();
+                    int y=battle.roles.get(selected).curY.get();
+                    moveRoleLabel(selected,x,y);
+                    RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
+                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x +" "+y);
+                    calabashClient.send(message);
                 }
                 else if (key.equals("j")){ 
                     Direction dir = Direction.RIGHT;
                     if (battle.roles.get(selected).camp == Camp.MONSTER)
                         dir = Direction.LEFT;
                     int atkid = battle.roles.get(selected).useGnrAtk(dir);
+                    AttackMessage message=new AttackMessage(selected,dir);
+                    battle.gameprogress.writeIn(ActionType.GNRATK, selected + battle.dir2str(dir));
+                    calabashClient.send(message);
                     if (atkid!=-1){
                         System.out.println("攻击" + atkid +"血量为" + battle.roles.get(atkid).HP);
                         if (battle.roles.get(atkid).alive == false){
@@ -213,15 +253,9 @@ public class Main extends Application {
                            iv.setFitWidth(Attributes.gridWidth);
                            labels.get(atkid).setGraphic(iv);
                         }
-                    }
-                    
+                    }   
                 }
-                int x=battle.roles.get(selected).curX.get();
-                int y=battle.roles.get(selected).curY.get();
-                moveRoleLabel(selected,x,y);
-                RoleMoveMessage message=new RoleMoveMessage(selected,x,y);
-                battle.gameprogress.writeIn(ActionType.MOVE, "3 up");//传消息传方向还是目的地
-                calabashClient.send(message);
+               
             }
         });
        
