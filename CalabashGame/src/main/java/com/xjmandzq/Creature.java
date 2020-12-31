@@ -207,8 +207,9 @@ public class Creature {
             this.HP-=lost;
             battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
             System.out.println(this.id + "被攻击" + this.HP);
-            if (HP<=0){ //死亡后，地图上格子仍然被占用！！！
+            if (HP<=0){ //死亡后，地图上格子不被占用！！！
                 this.alive = false; 
+                battle.map[Attributes.gridNumX*curY.get()+curX.get()]=-1;//空出原位置
                
             }
         }

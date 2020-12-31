@@ -9,9 +9,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
-class Playback  implements Runnable{
+class Playback implements Runnable {
 
     String filepath;
     private Document docs;
@@ -26,6 +27,8 @@ class Playback  implements Runnable{
     public Playback(String path, Main tmpmain) {
         this.filepath = path;
         this.play = tmpmain;
+        play.decorateStage();
+        System.out.println("playback" + " " + play.labels.size());
         if (filepath == null)
             return;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -40,10 +43,10 @@ class Playback  implements Runnable{
 
     }
 
-    public void parse() throws InterruptedException {
-        if(docs==null)
+    public void parse() {
+        if (docs == null)
             return;
-       
+
         NodeList rounds = fileroot.getChildNodes();
         for (int i = 1; i < rounds.getLength(); i++) {
             NodeList battle = rounds.item(i).getChildNodes();
@@ -66,7 +69,7 @@ class Playback  implements Runnable{
                         break;
                 }
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -107,10 +110,11 @@ class Playback  implements Runnable{
         if (atkid != -1) {
             System.out.println("攻击" + atkid + "血量为" + play.battle.roles.get(atkid).HP);
             if (play.battle.roles.get(atkid).alive == false) {
-                ImageView iv = play.picsList.get(atkid + Attributes.deadoffset);
-                iv.setFitHeight(Attributes.gridHeight);
-                iv.setFitWidth(Attributes.gridWidth);
-                play.labels.get(atkid).setGraphic(iv);
+                // play.battle.enemyDeadCount++;
+                //play.setDead(atkid); //断点
+                // if (battle.enemyDeadCount == Attributes.rolesNum) {
+                //     gameOver(true);
+                // }
             }
         }
     }
@@ -144,13 +148,11 @@ class Playback  implements Runnable{
 
     @Override
     public void run() {
+        play.playing.set(true);
         System.out.println("begin playback!");
-        try {
-            parse();
-            System.out.println("playback done!");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        parse();
+        System.out.println("playback done!");
+        play.playing.set(false);
 
     }
 

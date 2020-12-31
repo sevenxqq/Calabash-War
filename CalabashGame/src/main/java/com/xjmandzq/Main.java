@@ -6,6 +6,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.xml.transform.TransformerException;
+
 import java.util.Arrays;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -31,14 +35,14 @@ import javafx.stage.FileChooser;
 import javafx.stage.StageStyle;
 
 public class Main extends Application {
-    //connect
-    int myID;//自己的id
-    int matchPlayerID=-1;//想匹配的玩家ID
-    int enemyID=-1;//
-    boolean started=false;
-    String serverIP;//服务器ip地址
-    List<Player> players=new ArrayList<>();//当前与服务器连接的可匹配玩家
-    //UI
+    // connect
+    int myID;// 自己的id
+    int matchPlayerID = -1;// 想匹配的玩家ID
+    int enemyID = -1;//
+    boolean started = false;
+    String serverIP;// 服务器ip地址
+    List<Player> players = new ArrayList<>();// 当前与服务器连接的可匹配玩家
+    // UI
     Pane canvas = new Pane();
     Stage stage = new Stage();
     Scene scene = new Scene(canvas, Attributes.width, Attributes.height);
@@ -47,40 +51,38 @@ public class Main extends Application {
     CalabashClient calabashClient;
     public Battle battle = new Battle();
     List<ImageView> picsList;
-    ArrayList<ImageView> pics=new ArrayList<>();
-    ArrayList<ImageView> picsDead=new ArrayList<>();
+    ArrayList<ImageView> pics = new ArrayList<>();
+    ArrayList<ImageView> picsDead = new ArrayList<>();
     ArrayList<Label> labels = new ArrayList<>();
-
+    AtomicBoolean playing=new AtomicBoolean(false);
     @Override
     public void init() throws Exception {
         Attributes.init();
     }
 
-      //step1:连接服务器
-      void connectServer(int flag){
+    // step1:连接服务器
+    void connectServer(int flag) {
         TextInputDialog dialog = new TextInputDialog(Attributes.localServerIP);
         dialog.setTitle("连接服务器");
-        if(flag==0){
+        if (flag == 0) {
             dialog.setHeaderText("输入服务器IP地址后，按“确定”键连接服务器");
-        }
-        else{
+        } else {
             dialog.setHeaderText("服务器连接失败! 请检查服务器是否正在运行及服务器IP地址是否正确后重新输入");
         }
         dialog.setContentText("服务器IP地址：");
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()){
-            serverIP=result.get();
-            calabashClient= new CalabashClient(this);
-            if(calabashClient.connect(serverIP)){
+        if (result.isPresent()) {
+            serverIP = result.get();
+            calabashClient = new CalabashClient(this);
+            if (calabashClient.connect(serverIP)) {
                 startInterface();
-            }
-            else{
+            } else {
                 connectServer(1);
             }
         }
     }
 
-    //step2：选择开始游戏or回放or退出
+    // step2：选择开始游戏or回放or退出
     public void startInterface() {
         // 背景
         ImageView start = new ImageView(Attributes.images.get(Attributes.START));
@@ -99,16 +101,18 @@ public class Main extends Application {
             matchPlayer();
         });
         canvas.getChildren().add(startLabel);
-       //退出按钮
-       ImageView exitImage = new ImageView(Attributes.images.get(Attributes.EXITICON));
-       exitImage.setFitHeight(100);
-       exitImage.setFitWidth(200);
-       Label exitLabel = new Label("",exitImage);
-       exitLabel.setMaxSize(200,100);
-       exitLabel.setLayoutX(850);
-       exitLabel.setLayoutY(550);
-       exitLabel.setOnMouseClicked((MouseEvent e)->{ System.exit(0); });
-       canvas.getChildren().add(exitLabel);   
+        // 退出按钮
+        ImageView exitImage = new ImageView(Attributes.images.get(Attributes.EXITICON));
+        exitImage.setFitHeight(100);
+        exitImage.setFitWidth(200);
+        Label exitLabel = new Label("", exitImage);
+        exitLabel.setMaxSize(200, 100);
+        exitLabel.setLayoutX(850);
+        exitLabel.setLayoutY(550);
+        exitLabel.setOnMouseClicked((MouseEvent e) -> {
+            System.exit(0);
+        });
+        canvas.getChildren().add(exitLabel);
         // 读取进度按钮
         ImageView loadfile = new ImageView(Attributes.images.get(Attributes.LOADICON));
         loadfile.setFitHeight(100);
@@ -130,71 +134,68 @@ public class Main extends Application {
 
     }
 
-
-     //step3-1：选择开始游戏后匹配玩家
-     void matchPlayer(){
+    // step3-1：选择开始游戏后匹配玩家
+    void matchPlayer() {
         List<String> choices = new ArrayList<>();
-        for(Player p: players){
+        for (Player p : players) {
             System.out.println(p.id);
             choices.add(Integer.toString(p.id));
         }
         String defaultPlayer;
-        if(choices.size()>0)
-            defaultPlayer=choices.get(0);
+        if (choices.size() > 0)
+            defaultPlayer = choices.get(0);
         else
-            defaultPlayer="--";
+            defaultPlayer = "--";
         ChoiceDialog<String> dialog = new ChoiceDialog<>(defaultPlayer, choices);
         dialog.setTitle("匹配玩家");
         dialog.setHeaderText("选择当前在线玩家进行战斗吧！若想刷新新玩家请点击“取消”后再按“START“");
         dialog.setContentText("请选择想匹配的玩家id：");
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent() && result.get()!="--"){
-            matchPlayerID=Integer.parseInt(result.get());
-            InviteMessage message=new InviteMessage(myID,matchPlayerID);
+        if (result.isPresent() && result.get() != "--") {
+            matchPlayerID = Integer.parseInt(result.get());
+            InviteMessage message = new InviteMessage(myID, matchPlayerID);
             calabashClient.send(message);
             /*
-            enemyID=matchPlayerID;
-            started=true;
+             * enemyID=matchPlayerID; started=true;
              */
         }
-        if (started==true)
+        if (started == true)
             enterBattle();
 
         // The Java 8 way to get the response value (with lambda expression).
-        //result.ifPresent(letter -> System.out.println("Your choice: " + letter));
+        // result.ifPresent(letter -> System.out.println("Your choice: " + letter));
 
     }
+
     //
-    void processInvitation(int playerID){
+    void processInvitation(int playerID) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("玩家邀请");
-        alert.setHeaderText("玩家"+Integer.toString(playerID)+"邀请您加入战斗");
+        alert.setHeaderText("玩家" + Integer.toString(playerID) + "邀请您加入战斗");
         alert.setContentText("是否同意邀请？");
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK){
-            enemyID=playerID;
-            battle=new Battle();                                                               
-            battle.setCamp(Camp.MONSTER);   
-            started=true;
+        if (result.get() == ButtonType.OK) {
+            enemyID = playerID;
+            battle = new Battle();
+            battle.setCamp(Camp.MONSTER);
+            started = true;
             enterBattle();
-            ReplyMessage r=new ReplyMessage(myID,playerID,1);
+            ReplyMessage r = new ReplyMessage(myID, playerID, 1);
             calabashClient.send(r);
         } else {
-            ReplyMessage r=new ReplyMessage(myID,playerID,0);
+            ReplyMessage r = new ReplyMessage(myID, playerID, 0);
             calabashClient.send(r);
         }
 
     }
 
-
-    void invitationRefused(){
+    void invitationRefused() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("匹配失败");
         alert.setHeaderText(null);
-        alert.setContentText("玩家"+Integer.toString(matchPlayerID)+"拒绝了您的邀请，请重新匹配！");
+        alert.setContentText("玩家" + Integer.toString(matchPlayerID) + "拒绝了您的邀请，请重新匹配！");
         alert.showAndWait();
     }
-
 
     int xToPixel(int x) {// 地图格X坐标转换为像素横坐标
         return Attributes.mapLeft + x * Attributes.gridWidth;
@@ -216,24 +217,28 @@ public class Main extends Application {
         start.setFitHeight(Attributes.height);
         start.setFitWidth(Attributes.width);
         canvas.getChildren().add(start);
-        //calabashClient.connect(Attributes.serverIP);
+        // calabashClient.connect(Attributes.serverIP);
         enterBattle();
     }
 
     void loadProgress() throws InterruptedException {
+        playing.set(true);
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Xml Files", "*.xml"));
         File file = chooser.showOpenDialog(stage);
         if (file != null) {
-            decorateStage();
             Playback autoplay = new Playback(file.getPath(), this);
             new Thread(autoplay).start();
         }
-        // 回放完成后是否回到主界面
-
+        if(playing.get()==false)
+            startInterface();
     }
 
     void decorateStage() {
+        labels.clear();
+        pics.clear();
+        picsDead.clear();
+       
         // 显示地图
         ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
@@ -241,8 +246,7 @@ public class Main extends Application {
         canvas.getChildren().add(map);
 
         // 加载角色图片
-        picsList = Arrays.asList(
-                new ImageView(Attributes.images.get(Attributes.CALABASH1)),
+        picsList = Arrays.asList(new ImageView(Attributes.images.get(Attributes.CALABASH1)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH2)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH3)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH4)),
@@ -259,47 +263,44 @@ public class Main extends Application {
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION)),
                 new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION))
-                );
-    
+                new ImageView(Attributes.images.get(Attributes.MINION)));
+
         pics.addAll(picsList);
         ///////////
-        List<ImageView> picsListDead=Arrays.asList(
-            new ImageView(Attributes.images.get(Attributes.CALABASH1_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.CALABASH2_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.CALABASH3_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.CALABASH4_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.CALABASH5_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.CALABASH6_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.CALABASH7_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.GRANDPA_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.PANGOLIN_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.SCORPION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.SNAKE_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
-            new ImageView(Attributes.images.get(Attributes.MINION_DEAD))
-    );
-    //ArrayList<ImageView> picsDead=new ArrayList<>();
-    picsDead.addAll(picsListDead);
+        List<ImageView> picsListDead = Arrays.asList(new ImageView(Attributes.images.get(Attributes.CALABASH1_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH2_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH3_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH4_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH5_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH6_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.CALABASH7_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.GRANDPA_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.PANGOLIN_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.SCORPION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.SNAKE_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)),
+                new ImageView(Attributes.images.get(Attributes.MINION_DEAD)));
+        // ArrayList<ImageView> picsDead=new ArrayList<>();
+        picsDead.addAll(picsListDead);
         ////////////
         for (int i = 0; i < 2 * Attributes.rolesNum; i++) {
             pics.get(i).setFitWidth(100);
             pics.get(i).setFitHeight(100);
-            picsDead.get(i).setFitHeight(100);                                                 
-            picsDead.get(i).setFitWidth(100);  
+            picsDead.get(i).setFitHeight(100);
+            picsDead.get(i).setFitWidth(100);
         }
         // 人物的显示
         for (int i = 0; i < 2 * Attributes.rolesNum; i++) {
             Label label = new Label("", pics.get(i));
             label.setLayoutX(Attributes.mapLeft + battle.roles.get(i).curX.get() * Attributes.gridWidth);
             label.setLayoutY(Attributes.mapTop + battle.roles.get(i).curY.get() * Attributes.gridHeight);
-            System.out.printf("%d,%d,%d", i, battle.roles.get(i).curX.get(), battle.roles.get(i).curY.get());
-            System.out.println();
+            // System.out.printf("%d,%d,%d", i, battle.roles.get(i).curX.get(), battle.roles.get(i).curY.get());
+            // System.out.println();
             labels.add(label);
             canvas.getChildren().add(label);
         }
@@ -313,13 +314,11 @@ public class Main extends Application {
             canvas.getChildren().add(labelbar);
         }
         System.out.println("show 地图");
-
     }
 
     public void enterBattle() {
-
         decorateStage();
-
+        battle.enemyId = enemyID;
         if (battle.myCamp == Camp.MONSTER)
             battle.selected = 9;
         else
@@ -345,7 +344,7 @@ public class Main extends Application {
                     int x = battle.roles.get(selected).curX.get();
                     int y = battle.roles.get(selected).curY.get();
                     moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message=new RoleMoveMessage(enemyID,selected,x,y);
+                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
                     battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
                     calabashClient.send(message);
                 } else if (key.equals("d")) {
@@ -353,7 +352,7 @@ public class Main extends Application {
                     int x = battle.roles.get(selected).curX.get();
                     int y = battle.roles.get(selected).curY.get();
                     moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message=new RoleMoveMessage(enemyID,selected,x,y);
+                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
                     battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
                     calabashClient.send(message);
                 } else if (key.equals("w")) {
@@ -361,7 +360,7 @@ public class Main extends Application {
                     int x = battle.roles.get(selected).curX.get();
                     int y = battle.roles.get(selected).curY.get();
                     moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message=new RoleMoveMessage(enemyID,selected,x,y);
+                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
                     battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
                     calabashClient.send(message);
                 } else if (key.equals("s")) {
@@ -369,7 +368,7 @@ public class Main extends Application {
                     int x = battle.roles.get(selected).curX.get();
                     int y = battle.roles.get(selected).curY.get();
                     moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message=new RoleMoveMessage(enemyID,selected,x,y);
+                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
                     battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
                     calabashClient.send(message);
                 } else if (key.equals("j")) {
@@ -378,7 +377,7 @@ public class Main extends Application {
                         dir = Direction.LEFT;
                     if (battle.roles.get(selected).healer == false) {
                         int atkid = battle.roles.get(selected).useGnrAtk(dir);
-                        AttackMessage message = new AttackMessage(enemyID,selected, dir);
+                        AttackMessage message = new AttackMessage(enemyID, selected, dir);
                         battle.gameprogress.writeIn(ActionType.GNRATK, selected + " " + battle.dir2str(dir));
                         calabashClient.send(message);
                         if (atkid != -1) {
@@ -386,14 +385,14 @@ public class Main extends Application {
                             if (battle.roles.get(atkid).alive == false) {
                                 battle.enemyDeadCount++;
                                 setDead(atkid);
-                                if(battle.enemyDeadCount==Attributes.rolesNum){
+                                if (battle.enemyDeadCount == Attributes.rolesNum) {
                                     gameOver(true);
-                            }
+                                }
                             }
                         }
                     } else {// 治愈者无攻击能力，按j使用的是治愈术
-                        int healid =battle.roles.get(selected).useHealing(dir);
-                        AttackMessage message = new AttackMessage(enemyID,selected, dir);
+                        int healid = battle.roles.get(selected).useHealing(dir);
+                        AttackMessage message = new AttackMessage(enemyID, selected, dir);
                         battle.gameprogress.writeIn(ActionType.HEAL, selected + " " + battle.dir2str(dir));
                         calabashClient.send(message);
                         if (healid != -1) {
@@ -407,10 +406,14 @@ public class Main extends Application {
 
     }
 
-
-
-     //step3-3:游戏结束
-     void gameOver(boolean winFlag){
+    // step3-3:游戏结束
+    void gameOver(boolean winFlag) {
+        try {
+            battle.gameprogress.saveFile();
+        } catch (TransformerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("对战结果");
         alert.setHeaderText(null);
