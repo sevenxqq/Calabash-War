@@ -60,7 +60,7 @@ class Playback  implements Runnable{
                         System.out.println("atk");
                         break;
                     case "heal":
-                        parseHeel(action);
+                        parseHeal(action);
                         break;
                     default:
                         break;
@@ -115,7 +115,7 @@ class Playback  implements Runnable{
         }
     }
 
-    private void parseHeel(Node action) {
+    private void parseHeal(Node action) {
         int Chatid = Integer.parseInt(action.getAttributes().getNamedItem("ChatId").getNodeValue());
         String direction = action.getAttributes().getNamedItem("dir").getNodeValue();
         Direction dir;

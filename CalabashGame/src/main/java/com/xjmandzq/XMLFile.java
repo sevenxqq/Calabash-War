@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-class XMLFile {
+public class XMLFile {
     Document dcmt;
     Element fileroot;
     String filename;

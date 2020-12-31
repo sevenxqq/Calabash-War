@@ -8,11 +8,13 @@ public class Battle{
     boolean started=false;
     int enemyId;
     int[] map=new int[Attributes.gridNumX*Attributes.gridNumY];//记录地图中每格的角色id
-    ArrayList<Creature> roles = new ArrayList<>();//存储游戏角色
+    public ArrayList<Creature> roles = new ArrayList<>();//存储游戏角色
     ArrayList<Info> hpbars =  new ArrayList<>();//角色对应的血条,存储顺序和角色一样
     int[] startPos={9,10,11,20,27,28,29,19,18,17,35,15,16,24,25,26,33,34};
     Camp myCamp=Camp.CALABASH;
     XMLFile gameprogress = new XMLFile();
+    int myDeadCount=0;//己方死亡角色个数
+    int enemyDeadCount=0;//敌方死亡角色个数
     int selected;//被选中的角色id
     Battle(){
         //游戏开始时角色在地图上的排列情况
@@ -22,6 +24,8 @@ public class Battle{
         for(int i=0;i<startPos.length;i++){
             map[startPos[i]]=i;
         }
+        Camp c=Camp.CALABASH;
+        Camp m=Camp.MONSTER;
         //添加角色
         List<Creature> rolesList = Arrays.asList(
                 new Creature(0,"calabash1",Camp.CALABASH,this),

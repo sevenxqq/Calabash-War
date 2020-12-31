@@ -1,8 +1,9 @@
 
-  
+
 package com.xjmandzq;
 
-
+//import client.protocol.*;
+//import server.TankServer;
 
 import java.io.*;
 import java.net.DatagramPacket;
@@ -14,9 +15,9 @@ import java.net.Socket;
  * 网络方法接口
  */
 public class CalabashClient {
-    private Main player;
+    private Main player;//从属的玩家
     private int UDP_PORT;//客户端的UDP端口号
-    private String serverIP;//服务器IP地址
+    private String serverIP=Attributes.localServerIP;//服务器IP地址
     private int serverUDPPort;//服务器转发客户UDP包的UDP端口
     private int TANK_DEAD_UDP_PORT;//服务器监听坦克死亡的UDP端口
     private DatagramSocket ds = null;//客户端的UDP套接字
@@ -27,6 +28,7 @@ public class CalabashClient {
 
     public CalabashClient(Main player){
         this.player = player;
+        this.serverIP=player.serverIP;
         try {
             this.UDP_PORT = getRandomUDPPort();
         }catch (Exception e){
@@ -35,37 +37,33 @@ public class CalabashClient {
         }
     }
 
-   
+    /*public static void main(String[] args){
+        CalabashClient calabashClient=new CalabashClient();
+        calabashClient.connect("127.0.0.1");
+    }*/
     /**
      * 与服务器进行TCP连接
      * @param ip server IP
      */
-    public void connect(String ip){
-        serverIP = Attributes.serverIP;
+    public boolean connect(String ip) {
         Socket s = null;
         try {
             ds = new DatagramSocket(UDP_PORT);//创建UDP套接字
             try {
                 s = new Socket(ip, CalabashServer.TCP_PORT);//创建TCP套接字
             }catch (Exception e1){
-                //tc.getServerNotStartDialog().setVisible(true);
+                ds.close();
+                return false;
             }
             DataOutputStream out = new DataOutputStream(s.getOutputStream());
             out.writeInt(UDP_PORT);//向服务器发送自己的UDP端口号//TODO
             DataInputStream in = new DataInputStream(s.getInputStream());
             int id = in.readInt();//获得自己的id号//TODO
-            player.id=id;
+            player.myID=id;
             this.serverUDPPort = in.readInt();//获得服务器转发客户端消息的UDP端口号//TODO
-            if(id==0) {
-                player.battle.setCamp(Camp.CALABASH);
-            }
-            else if(id==1) {
-                player.battle.setCamp(Camp.MONSTER);
-            }
-            else
-                player.battle.setCamp(Camp.BYSTANDER);
-            player.battle.setCamp((id==0)?Camp.CALABASH:Camp.MONSTER);
-           
+            //this.TANK_DEAD_UDP_PORT = in.readInt();//获得服务器监听坦克死亡的UDP端口//TODO
+            //tc.getMyTank().setId(id);//设置坦克的id号
+            //tc.getMyTank().setGood((id & 1) == 0 ? true : false);//根据坦克的id号分配阵营
             System.out.println("connect to server successfully...");
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,14 +74,8 @@ public class CalabashClient {
                 e.printStackTrace();
             }
         }
-
         new Thread(new UDPThread()).start();//开启客户端UDP线程, 向服务器发送或接收游戏数据
-
-        if(player.id==1){
-            GameStartMessage message=new GameStartMessage(player.id);
-            send(message);
-        }
-
+        return true;
     }
 
     /**
@@ -104,10 +96,11 @@ public class CalabashClient {
 
         @Override
         public void run() {
-            while(null != ds){
+            while(ds!=null){
                 DatagramPacket dp = new DatagramPacket(buffer, buffer.length);
                 try{
                     ds.receive(dp);
+                    System.out.println("client receive");
                     parse(dp);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -127,8 +120,8 @@ public class CalabashClient {
             Message message = null;
             switch (messageType){//根据消息的类型调用对应消息的解析方法
                 case Message.GAME_START:
-                    message = new GameStartMessage(player);
-                    message.parse(in);
+                    //message = new GameStartMessage(player);
+                    //message.parse(in);
                     break;
                 case  Message.ROLE_MOVE :
                     message = new RoleMoveMessage(player);
@@ -136,6 +129,19 @@ public class CalabashClient {
                     break;
                 case Message.ATTACK:
                     message=new AttackMessage(player);
+                    message.parse(in);
+                    break;
+                case Message.NEW_PLAYER:
+                    message=new NewPlayerMessage(player);
+                    message.parse(in);
+                    break;
+                case Message.INVITATION:
+                    message=new InviteMessage(player);
+                    message.parse(in);
+                    break;
+                case Message.REPLY:
+                    message=new ReplyMessage(player);
+                    message.parse(in);
                     break;
                     /*
                 case Msg.MISSILE_NEW_MSG:

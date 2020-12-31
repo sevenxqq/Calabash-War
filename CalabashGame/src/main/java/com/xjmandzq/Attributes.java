@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import javafx.scene.image.Image;
 
 public final class Attributes{
-    public static final String serverIP = "127.0.0.1"; //服务器ip:,127.0.0.1; 172.24.52.200
+  
+    public static final String localServerIP="127.0.0.1";//本机测试时服务器ip地址
+    public static final String remoteServerIP="172.24.52.200";//联机测试时服务器ip地址（nju）
     //参数
     public static ArrayList<Image> images = new ArrayList<Image>();
     public static final int height=744;//地图高度（像素级）
@@ -41,19 +43,18 @@ public final class Attributes{
     public static final int SCORPION = 14;
     public static final int MINION = 15;
     //
-    public static final int DEADBRO1 = 16;
-    public static final int DEADBRO2 = 17;
-    public static final int DEADBRO3 = 18;
-    public static final int DEADBRO4 = 19;
-    public static final int DEADBRO5 = 20;
-    public static final int DEADBRO6 = 21;
-    public static final int DEADBRO7 = 22;
-    public static final int DEADGRANDPA = 23;
-    public static final int DEADPANGOLIN = 24;
-    public static final int DEADSNAKE = 25;
-    public static final int DEADSCORPION = 26;
-    public static final int DEADMINION = 27;
-
+    public static final int CALABASH1_DEAD = 16;
+    public static final int CALABASH2_DEAD = 17;
+    public static final int CALABASH3_DEAD = 18;
+    public static final int CALABASH4_DEAD = 19;
+    public static final int CALABASH5_DEAD = 20;
+    public static final int CALABASH6_DEAD = 21;
+    public static final int CALABASH7_DEAD = 22;
+    public static final int GRANDPA_DEAD = 23;
+    public static final int PANGOLIN_DEAD = 24;
+    public static final int SNAKE_DEAD = 25;
+    public static final int SCORPION_DEAD = 26;
+    public static final int MINION_DEAD = 27;
   
     //
     public static void init(){
@@ -74,6 +75,7 @@ public final class Attributes{
         images.add(new Image("snake.PNG"));
         images.add(new Image("scorpion.PNG"));
         images.add(new Image("minion.PNG"));//15
+        //死亡图片
         images.add(new Image("deadbro1.png"));
         images.add(new Image("deadbro2.png"));
         images.add(new Image("deadbro3.png"));
@@ -86,6 +88,7 @@ public final class Attributes{
         images.add(new Image("deadsnake.png"));
         images.add(new Image("deadscorpion.png"));
         images.add(new Image("deadminion.png"));
+
         images.add(new Image("load.PNG"));
 
        
