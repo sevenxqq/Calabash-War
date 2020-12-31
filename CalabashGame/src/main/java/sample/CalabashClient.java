@@ -13,7 +13,7 @@ import java.net.Socket;
  * 网络方法接口
  */
 public class CalabashClient {
-    private Main player;
+    private Main player;//从属的玩家
     private int UDP_PORT;//客户端的UDP端口号
     private String serverIP=Attributes.localServerIP;//服务器IP地址
     private int serverUDPPort;//服务器转发客户UDP包的UDP端口
@@ -51,9 +51,7 @@ public class CalabashClient {
                 s = new Socket(ip, CalabashServer.TCP_PORT);//创建TCP套接字
             }catch (Exception e1){
                 ds.close();
-                System.out.println("oops");
                 return false;
-                //tc.getServerNotStartDialog().setVisible(true);
             }
             DataOutputStream out = new DataOutputStream(s.getOutputStream());
             out.writeInt(UDP_PORT);//向服务器发送自己的UDP端口号//TODO
@@ -61,8 +59,6 @@ public class CalabashClient {
             int id = in.readInt();//获得自己的id号//TODO
             player.myID=id;
             this.serverUDPPort = in.readInt();//获得服务器转发客户端消息的UDP端口号//TODO
-
-
             //this.TANK_DEAD_UDP_PORT = in.readInt();//获得服务器监听坦克死亡的UDP端口//TODO
             //tc.getMyTank().setId(id);//设置坦克的id号
             //tc.getMyTank().setGood((id & 1) == 0 ? true : false);//根据坦克的id号分配阵营
@@ -76,17 +72,8 @@ public class CalabashClient {
                 e.printStackTrace();
             }
         }
-
         new Thread(new UDPThread()).start();//开启客户端UDP线程, 向服务器发送或接收游戏数据
-/*
-        if(player.id%2==1){
-            GameStartMessage message=new GameStartMessage(player.id);
-            send(message);
-        }
-
- */
         return true;
-
     }
 
     /**

@@ -5,17 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>sample</groupId>
-    <artifactId>javafx_test1</artifactId>
+    <artifactId>CalabashWar</artifactId>
     <version>1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
-
         <plugins>
             <plugin>
-
                 <executions>
                     <execution>
                         <phase>package</phase>

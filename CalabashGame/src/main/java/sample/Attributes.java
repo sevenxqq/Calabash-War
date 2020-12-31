@@ -70,6 +70,7 @@ public final class Attributes{
         images.add(new Image("scorpion.PNG"));
         images.add(new Image("minion.PNG"));
         //添加角色死亡图片
+
         images.add(new Image("brother1_dead.png"));
         images.add(new Image("brother2_dead.png"));
         images.add(new Image("brother3_dead.png"));

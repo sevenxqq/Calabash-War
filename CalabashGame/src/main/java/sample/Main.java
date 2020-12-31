@@ -146,7 +146,6 @@ public class Main extends Application {
             /*
             enemyID=matchPlayerID;
             started=true;
-
              */
         }
         if (started==true)
@@ -165,6 +164,7 @@ public class Main extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK){
             enemyID=playerID;
+            battle=new Battle();
             battle.setCamp(Camp.MONSTER);
             started=true;
             enterBattle();
@@ -373,8 +373,14 @@ public class Main extends Application {
         else{
             alert.setContentText("很遗憾，对局失败...");
         }
+
+        labels.clear();
+        pics.clear();
+        picsDead.clear();
+
+        started=false;
         alert.showAndWait();
-        matchPlayer();
+        startInterface();
     }
 
     void setDead(int roleID){
@@ -392,8 +398,6 @@ public class Main extends Application {
         /*ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
         map.setFitWidth(Attributes.width);
-
-
         //canvas.setPrefSize(500,200);
         canvas.getChildren().add(map);*/
 
@@ -424,8 +428,3 @@ public class Main extends Application {
 
 
 }
-
-
-
-
-

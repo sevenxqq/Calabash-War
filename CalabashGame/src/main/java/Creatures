@@ -1,0 +1,35 @@
+
+
+
+class Creature{
+    //
+    protected String name;//
+    int posX;//
+    int posY;//
+    boolean isDead;//
+
+}
+
+class CalabashBoy{
+    //
+}
+
+class Grandpa{
+    //
+}
+
+class Pangolin{
+    //
+}
+
+class Snake{
+    //
+}
+
+class Scorpion{
+    //
+}
+
+class Minion{
+    //
+}

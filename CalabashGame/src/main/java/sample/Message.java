@@ -339,6 +339,7 @@ class ReplyMessage implements Message {
                 System.out.println(r);
                 if(r==1){//对方同意邀请
                     player.enemyID=id1;
+                    player.battle=new Battle();
                     player.battle.setCamp(Camp.CALABASH);
                     player.started=true;
 
