@@ -21,18 +21,17 @@
 
 */
 
-
 package com.xjmandzq;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-
 public class Creature {
 
-//属性-------------------------------------------//
-    //--------------基本属性----------------
+    // 属性-------------------------------------------//
+    // --------------基本属性----------------
     Camp camp;
     String cname;
     int id;
@@ -41,16 +40,16 @@ public class Creature {
     int speed = 1;
     boolean alive = true;
     String rscname;
-    //--------------空间属性--------------
-    public AtomicInteger curX=new AtomicInteger(0);
-    public AtomicInteger curY=new AtomicInteger(0);
-    protected int dstX; //目的位置好像也没用到
+    // --------------空间属性--------------
+    public AtomicInteger curX = new AtomicInteger(0);
+    public AtomicInteger curY = new AtomicInteger(0);
+    protected int dstX; // 目的位置好像也没用到
     protected int dstY;
-    public AtomicBoolean avaliable=new AtomicBoolean(true);
-    public AtomicInteger cmd=new AtomicInteger(0);
-    public AtomicBoolean visible=new AtomicBoolean(false);
-    //---------------战斗属性-------------
-    final int maxHP; 
+    public AtomicBoolean avaliable = new AtomicBoolean(true);
+    public AtomicInteger cmd = new AtomicInteger(0);
+    public AtomicBoolean visible = new AtomicBoolean(false);
+    // ---------------战斗属性-------------
+    final int maxHP;
     int HP;
     final int maxMP;
     int MP;
@@ -61,10 +60,9 @@ public class Creature {
     int healing;
     int healCost;
 
-//构造器-----------------------------------------//
-    public Creature(Camp itscamp,String itsname,boolean ishealer,int itsspeed,boolean isalive,String itsrsc,
-    int itsmaxHP,int itsmaxMP,int itsgnrAtk,int itsmgcAtk,int itsmgcCost,int itshealing,int itshealCost
-    ){
+    // 构造器-----------------------------------------//
+    public Creature(Camp itscamp, String itsname, boolean ishealer, int itsspeed, boolean isalive, String itsrsc,
+            int itsmaxHP, int itsmaxMP, int itsgnrAtk, int itsmgcAtk, int itsmgcCost, int itshealing, int itshealCost) {
         this.camp = itscamp;
         this.cname = itsname;
         this.healer = ishealer;
@@ -81,144 +79,189 @@ public class Creature {
         this.healing = itshealing;
         this.healCost = itshealCost;
     }
-  
-    public Creature(int id,String name,Camp icamp,Battle battle){
-        this.id=id;
-        this.cname=name;
-        this.battle=battle;
+
+    public Creature(int id, String name, Camp icamp, Battle battle) {
+        this.id = id;
+        this.cname = name;
+        this.battle = battle;
         this.maxHP = 100;
         this.maxMP = 100;
         this.HP = this.maxHP;
         this.MP = this.maxMP;
         this.camp = icamp;
-        this.gnrAtk = 10;//暂时写着
+        this.gnrAtk = 10;// 暂时写着
     }
 
-//方法------------------------------------------//
-        //-----------------战斗模块-------------
-        public void initatbt(int itsHP,int itsMP,int itsgnrAtk,int itsmgcAtk,int itsmgcCost,int itshealing,int itshealCost){
-            this.HP = itsHP;
-            this.MP = itsMP;
-            this.gnrAtk = itsgnrAtk;
-            this.mgcAtk = itsmgcAtk;
-            this.mgcCost = itsmgcCost;
-            this.healing = itshealing;
-            this.healCost = itshealCost;
+    // 方法------------------------------------------//
+    // -----------------战斗模块-------------
+    public void initatbt(int itsHP, int itsMP, int itsgnrAtk, int itsmgcAtk, int itsmgcCost, int itshealing,
+            int itshealCost) {
+        this.HP = itsHP;
+        this.MP = itsMP;
+        this.gnrAtk = itsgnrAtk;
+        this.mgcAtk = itsmgcAtk;
+        this.mgcCost = itsmgcCost;
+        this.healing = itshealing;
+        this.healCost = itshealCost;
 
-        }
-        public void initpos(int srcx,int srxy,int dstx,int dsty){//暂时不用管
-        //    进场时，人物图片在方格外，然后移动到初始队列位置
-        //    可以实现一个移动效果
-        }
+    }
 
-        public void moveToDst(int x,int y){
-            this.dstX = x;
-            this.dstY = y;
-        }
-     
-        public void move(Direction dir){//朝着指定方向移动一步
-            switch(dir){
-                case UP: move(curX.get(),curY.get()-1);break;
-                case DOWN:move(curX.get(),curY.get()+1);break;
-                case LEFT:move(curX.get()-1,curY.get());break;
-                case RIGHT:move(curX.get()+1,curY.get());break;
-                default: return;
-            }
-        }
-        public boolean move(int x,int y){//移动到[x,y]
-            if (x>=0 && x<Attributes.gridNumX && y>=0 && y<Attributes.gridNumY
-                    && !battle.isOccupied(x,y)){
-                battle.map[Attributes.gridNumX*curY.get()+curX.get()]=-1;//空出原位置
-                battle.map[Attributes.gridNumX*y+x]=id;//标记新位置
-                curX.set(x);
-                curY.set(y);
-                return true;
-            }
-            return false;
-        }
-        /*
-            parm:攻击方向
-            解释：只能朝一个格子内的敌人发起攻击
-            附加：后期可加红色数字图标展示失血效果
-        */
-        public int useGnrAtk(Direction dir){
-            int atkx = curX.get(),atky = curY.get();
-            switch(dir){
-                case UP: atky--;break;
-                case DOWN: atky++;break;
-                case LEFT:atkx--;break;
-                case RIGHT:atkx++;break;
-                default: return -1;
-            }
-            if (battle.isOccupied(atkx,atky) == false)
-                return -1;
-            int atkid = battle.map[Attributes.gridNumX*atky+atkx];
-            if (this.camp == battle.roles.get(atkid).camp)
-                return -1;
-            if (battle.roles.get(atkid).alive == false)
-                return -1;
-            battle.roles.get(atkid).beenAtked(this.gnrAtk);
-            return atkid;
-        }
-        /*
-            暂时不写
-            parm:释放技能方向
-            解释：先得出在攻击方向上的格子,然后依次检测，飞过空格显示对应子弹,遇到敌人子弹消亡，敌人扣血，停止检测
-        */
-        public void useMgcAtk(Direction dir){
-            if (this.MP<=0)
+    public void initpos(int srcx, int srxy, int dstx, int dsty) {// 暂时不用管
+        // 进场时，人物图片在方格外，然后移动到初始队列位置
+        // 可以实现一个移动效果
+    }
+
+    public void moveToDst(int x, int y) {
+        this.dstX = x;
+        this.dstY = y;
+    }
+
+    public void move(Direction dir) {// 朝着指定方向移动一步
+        switch (dir) {
+            case UP:
+                move(curX.get(), curY.get() - 1);
+                break;
+            case DOWN:
+                move(curX.get(), curY.get() + 1);
+                break;
+            case LEFT:
+                move(curX.get() - 1, curY.get());
+                break;
+            case RIGHT:
+                move(curX.get() + 1, curY.get());
+                break;
+            default:
                 return;
-            int pos = curY.get()*Attributes.gridNumX + curX.get();
-            ArrayList<Integer> atkRoute = new ArrayList<Integer>();
-            Bullet bullet = new Bullet(img);
-            
         }
-        /*
-            parm:指向方向
-            解释：只能向一个格子内的友方使用治愈术
-            附加：后期加绿色向上数字表示加血效果
-        */
-        public int useHealing(Direction dir){
-            if (this.MP<=0)
-                return -1;
-            int heelx = curX.get(),heely = curY.get();
-            switch(dir){
-                case UP: heely--;break;
-                case DOWN: heely++;break;
-                case LEFT:heelx--;break;
-                case RIGHT:heelx++;break;
-                default: return -1;
-            }
-            if (battle.isOccupied(heelx,heely) == false)
-                return -1;;
-            int heelid = battle.map[Attributes.gridNumX*heely+heelx];
-            if (this.camp != battle.roles.get(heelid).camp)
-                return -1;
-            if (battle.roles.get(heelid).alive == false)
-                return -1;
-            battle.roles.get(heelid).beenHealed(this.healing); 
-            this.MP-=this.healCost;
-            return heelid;
-        }
-        /*
-            parm:损失血量
-        */
-        public void beenAtked(int lost){
-            this.HP-=lost;
-            battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
-            System.out.println(this.id + "被攻击" + this.HP);
-            if (HP<=0){ //死亡后，地图上格子不被占用！！！
-                this.alive = false; 
-                battle.map[Attributes.gridNumX*curY.get()+curX.get()]=-1;//空出原位置
-               
-            }
-        }
-        public void beenHealed(int inc){
-            this.HP = Math.min(HP + inc,maxHP);
-        }
-       
+    }
 
+    public boolean move(int x, int y) {// 移动到[x,y]
+        if (x >= 0 && x < Attributes.gridNumX && y >= 0 && y < Attributes.gridNumY && !battle.isOccupied(x, y)) {
+            battle.map[Attributes.gridNumX * curY.get() + curX.get()] = -1;// 空出原位置
+            battle.map[Attributes.gridNumX * y + x] = id;// 标记新位置
+            curX.set(x);
+            curY.set(y);
+            return true;
+        }
+        return false;
+    }
 
-    
+    /*
+     * parm:攻击方向 解释：只能朝一个格子内的敌人发起攻击 附加：后期可加红色数字图标展示失血效果
+     */
+    public int useGnrAtk(Direction dir) {
+        int atkx = curX.get(), atky = curY.get();
+        switch (dir) {
+            case UP:
+                atky--;
+                break;
+            case DOWN:
+                atky++;
+                break;
+            case LEFT:
+                atkx--;
+                break;
+            case RIGHT:
+                atkx++;
+                break;
+            default:
+                return -1;
+        }
+        if (battle.isOccupied(atkx, atky) == false)
+            return -1;
+        int atkid = battle.map[Attributes.gridNumX * atky + atkx];
+        if (this.camp == battle.roles.get(atkid).camp)
+            return -1;
+        if (battle.roles.get(atkid).alive == false)
+            return -1;
+        battle.roles.get(atkid).beenAtked(this.gnrAtk);
+        return atkid;
+    }
+
+    /*
+     * 暂时不写 parm:释放技能方向 解释：先得出在攻击方向上的格子,然后依次检测，飞过空格显示对应子弹,遇到敌人子弹消亡，敌人扣血，停止检测
+     */
+    int checkEnemy(int x, int y) {
+        if (battle.isOccupied(x, y) == false)
+            return -1;
+        int atkid = battle.map[Attributes.gridNumX * y + x];
+        if (this.camp == battle.roles.get(atkid).camp)
+            return -1;
+        if (battle.roles.get(atkid).alive == false)
+            return -1;
+        return atkid;
+    }
+
+    public void useMgcAtk(Direction dir) {
+        if (this.MP <= 0)
+            return;
+        int x = curX.get();
+        int y = curY.get();
+        Bullet blt = new Bullet(0, x,y);
+        if (dir == Direction.RIGHT) {
+            for (int i = curX.get(); i <= Attributes.gridNumX; i++) {
+                int atkid = checkEnemy(i, y);
+                if (atkid == -1)
+                    continue;
+                battle.roles.get(atkid).beenAtked(this.mgcAtk);
+                break;
+            }
+        }
+
+    }
+
+    /*
+     * parm:指向方向 解释：只能向一个格子内的友方使用治愈术 附加：后期加绿色向上数字表示加血效果
+     */
+    public int useHealing(Direction dir) {
+        if (this.MP <= 0)
+            return -1;
+        int heelx = curX.get(), heely = curY.get();
+        switch (dir) {
+            case UP:
+                heely--;
+                break;
+            case DOWN:
+                heely++;
+                break;
+            case LEFT:
+                heelx--;
+                break;
+            case RIGHT:
+                heelx++;
+                break;
+            default:
+                return -1;
+        }
+        if (battle.isOccupied(heelx, heely) == false)
+            return -1;
+        ;
+        int heelid = battle.map[Attributes.gridNumX * heely + heelx];
+        if (this.camp != battle.roles.get(heelid).camp)
+            return -1;
+        if (battle.roles.get(heelid).alive == false)
+            return -1;
+        battle.roles.get(heelid).beenHealed(this.healing);
+        this.MP -= this.healCost;
+        return heelid;
+    }
+
+    /*
+     * parm:损失血量
+     */
+    public void beenAtked(int lost) {
+        this.HP -= lost;
+        battle.hpbars.get(this.id).setBar(battle.roles.get(this.id));
+        System.out.println(this.id + "被攻击" + this.HP);
+        if (HP <= 0) { // 死亡后，地图上格子不被占用！！！
+            this.alive = false;
+            battle.map[Attributes.gridNumX * curY.get() + curX.get()] = -1;// 空出原位置
+
+        }
+    }
+
+    public void beenHealed(int inc) {
+        this.HP = Math.min(HP + inc, maxHP);
+    }
 
 }

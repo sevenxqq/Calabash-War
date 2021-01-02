@@ -1,6 +1,9 @@
 
 package com.xjmandzq;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -13,7 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 class Playback implements Runnable {
-
+// class Playback  {
     String filepath;
     private Document docs;
     private Element fileroot;
@@ -56,11 +59,11 @@ class Playback implements Runnable {
                 switch (acttype) {
                     case "move":
                         parseMove(action);
-                        System.out.println("move");
+                        // System.out.println("move");
                         break;
                     case "gnrAtk":
                         parseGnrAtk(action);
-                        System.out.println("atk");
+                        // System.out.println("atk");
                         break;
                     case "heal":
                         parseHeal(action);
@@ -73,6 +76,7 @@ class Playback implements Runnable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                
             }
         }
     }
@@ -82,8 +86,9 @@ class Playback implements Runnable {
         int x = Integer.parseInt(action.getAttributes().getNamedItem("x").getNodeValue());
         int y = Integer.parseInt(action.getAttributes().getNamedItem("y").getNodeValue());
         boolean canmove = play.battle.roles.get(Chatid).move(x, y);
-        if (canmove)
-            play.moveRoleLabel(Chatid, x, y);
+        if (canmove){
+            play.moveRoleLabel(Chatid, x, y);  
+        }
     }
 
     private void parseGnrAtk(Node action) {
@@ -108,13 +113,14 @@ class Playback implements Runnable {
         }
         int atkid = play.battle.roles.get(Chatid).useGnrAtk(dir);
         if (atkid != -1) {
-            System.out.println("攻击" + atkid + "血量为" + play.battle.roles.get(atkid).HP);
+            // System.out.println("攻击" + atkid + "血量为" + play.battle.roles.get(atkid).HP);
             if (play.battle.roles.get(atkid).alive == false) {
                 // play.battle.enemyDeadCount++;
                 //play.setDead(atkid); //断点
-                // if (battle.enemyDeadCount == Attributes.rolesNum) {
-                //     gameOver(true);
-                // }
+                play.labels.get(atkid).setVisible(false);
+                play.labels.get(atkid).setManaged(false);
+                play.labels.get(atkid + Attributes.hpoffset).setVisible(false);
+                play.labels.get(atkid + Attributes.hpoffset).setManaged(false);
             }
         }
     }
@@ -153,7 +159,6 @@ class Playback implements Runnable {
         parse();
         System.out.println("playback done!");
         play.playing.set(false);
-
     }
 
 }

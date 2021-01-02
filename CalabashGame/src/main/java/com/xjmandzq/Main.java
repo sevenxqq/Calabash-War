@@ -6,7 +6,10 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.xml.transform.TransformerException;
 
@@ -49,12 +52,13 @@ public class Main extends Application {
     double mouseX;
     double mouseY;
     CalabashClient calabashClient;
-    public Battle battle = new Battle();
+    Battle battle = new Battle();
     List<ImageView> picsList;
     ArrayList<ImageView> pics = new ArrayList<>();
     ArrayList<ImageView> picsDead = new ArrayList<>();
     ArrayList<Label> labels = new ArrayList<>();
-    AtomicBoolean playing=new AtomicBoolean(false);
+    AtomicBoolean playing = new AtomicBoolean(false);
+
     @Override
     public void init() throws Exception {
         Attributes.init();
@@ -121,7 +125,7 @@ public class Main extends Application {
         loadLabel.setMaxSize(200, 100);
         loadLabel.setLayoutX(360);
         loadLabel.setLayoutY(360);
-        System.out.println("add load label");
+        // System.out.println("add load label");
         loadLabel.setOnMouseClicked((MouseEvent e) -> {
             try {
                 loadProgress();
@@ -221,24 +225,84 @@ public class Main extends Application {
         enterBattle();
     }
 
+    ///////////////////////
+    /**
+     * Runs the specified {@link Runnable} on the JavaFX application thread and
+     * waits for completion.
+     *
+     * @param action the {@link Runnable} to run
+     * @throws NullPointerException if {@code action} is {@code null}
+     */
+    static void runAndWait(Runnable action) {
+        if (action == null)
+            throw new NullPointerException("action");
+
+        // run synchronously on JavaFX thread
+        if (Platform.isFxApplicationThread()) {
+            action.run();
+            return;
+        }
+
+        // queue on JavaFX thread and wait for completion
+        final CountDownLatch doneLatch = new CountDownLatch(1);
+        Platform.runLater(() -> {
+            try {
+                action.run();
+                // new Thread(action).start();
+            } finally {
+                doneLatch.countDown();
+            }
+        });
+
+        try {
+            doneLatch.await();
+        } catch (InterruptedException e) {
+            // ignore exception
+        }
+    }
+
+    /////////////////////
     void loadProgress() throws InterruptedException {
-        playing.set(true);
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Xml Files", "*.xml"));
         File file = chooser.showOpenDialog(stage);
         if (file != null) {
             Playback autoplay = new Playback(file.getPath(), this);
-            new Thread(autoplay).start();
+            // autoplay.run();
+
+            //A版本：
+            Thread t1 = new Thread(autoplay);
+            t1.start();
+            // t1.join();
+            // startInterface();
+            System.out.println("回退");
+
+            // runAndWait(autoplay);
+            // final CountDownLatch doneLatch = new CountDownLatch(1);
+            // try {
+            // new Thread(autoplay).start();
+            // } finally {
+            // doneLatch.countDown();
+            // startInterface();
+            // System.out.println("回到主界面");
+            // }
+
         }
-        if(playing.get()==false)
-            startInterface();
+        // while (true) {
+        //     if (playing.get() == false) {
+        //         startInterface();
+        //         System.out.println("回到主界面");
+        //         break;
+        //     }
+        // }
+
     }
 
     void decorateStage() {
         labels.clear();
         pics.clear();
         picsDead.clear();
-       
+
         // 显示地图
         ImageView map = new ImageView(Attributes.images.get(Attributes.MAP));
         map.setFitHeight(Attributes.height);
@@ -299,8 +363,6 @@ public class Main extends Application {
             Label label = new Label("", pics.get(i));
             label.setLayoutX(Attributes.mapLeft + battle.roles.get(i).curX.get() * Attributes.gridWidth);
             label.setLayoutY(Attributes.mapTop + battle.roles.get(i).curY.get() * Attributes.gridHeight);
-            // System.out.printf("%d,%d,%d", i, battle.roles.get(i).curX.get(), battle.roles.get(i).curY.get());
-            // System.out.println();
             labels.add(label);
             canvas.getChildren().add(label);
         }
@@ -417,10 +479,9 @@ public class Main extends Application {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("对战结果");
         alert.setHeaderText(null);
-        if(winFlag){
+        if (winFlag) {
             alert.setContentText("恭喜您，取得胜利!");
-        }
-        else{
+        } else {
             alert.setContentText("很遗憾，对局失败...");
         }
 
@@ -428,13 +489,17 @@ public class Main extends Application {
         pics.clear();
         picsDead.clear();
 
-        started=false;
+        started = false;
         alert.showAndWait();
         startInterface();
     }
 
-    void setDead(int roleID){
-        labels.get(roleID).setGraphic(picsDead.get(roleID));
+    void setDead(int roleID) {
+        // labels.get(roleID).setGraphic(picsDead.get(roleID));
+        labels.get(roleID).setVisible(false);
+        labels.get(roleID).setManaged(false);
+        labels.get(roleID + Attributes.hpoffset).setVisible(false);
+        labels.get(roleID + Attributes.hpoffset).setManaged(false);
     }
 
     @Override
@@ -464,3 +529,5 @@ public class Main extends Application {
         launch(args);
     }
 }
+
+
