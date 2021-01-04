@@ -79,12 +79,13 @@ public class XMLFile {
         switch(atype){
             case MOVE: writeInMove(str); break;
             case GNRATK: writeInGnrAtk(str); break;
-            case HEAL: writeInHeel(str); break;
+            case MGCATK: writeInMgcAtk(str);break;
+            case HEAL: writeInHeal(str); break;
             default:break;
         }
     }
 
-    public void writeInMove(String str){
+    private void writeInMove(String str){
         Element move=dcmt.createElement("move");
         String [] arr = str.split("\\s+"); 
         move.setAttribute("ChatId",arr[0]);
@@ -95,7 +96,7 @@ public class XMLFile {
         battle.appendChild(move);
     }
 
-    public void writeInGnrAtk(String str){
+    private void writeInGnrAtk(String str){
         Element gnrAtk=dcmt.createElement("gnrAtk");
         String [] arr = str.split("\\s+"); 
         gnrAtk.setAttribute("ChatId",arr[0]);
@@ -105,7 +106,18 @@ public class XMLFile {
         battle.appendChild(gnrAtk);
     }
 
-    public void writeInHeel(String str){
+    private void writeInMgcAtk(String str){
+        Element mgcAtk=dcmt.createElement("mgcAtk");
+        String [] arr = str.split("\\s+"); 
+        mgcAtk.setAttribute("ChatId",arr[0]);
+        mgcAtk.setAttribute("dir",arr[1]);
+        Text m=dcmt.createTextNode("role" + arr[0] +" use mgcAtk and the dir is " + arr[1]);
+        mgcAtk.appendChild(m);
+        battle.appendChild(mgcAtk);
+    }
+
+
+    private void writeInHeal(String str){
         Element heel=dcmt.createElement("heel");
         String [] arr = str.split("\\s+"); 
         heel.setAttribute("ChatId",arr[0]);

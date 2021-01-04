@@ -127,12 +127,7 @@ public class Main extends Application {
         loadLabel.setLayoutY(360);
         // System.out.println("add load label");
         loadLabel.setOnMouseClicked((MouseEvent e) -> {
-            try {
-                loadProgress();
-            } catch (InterruptedException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+            loadProgress();
         });
         canvas.getChildren().add(loadLabel);
 
@@ -262,39 +257,22 @@ public class Main extends Application {
     }
 
     /////////////////////
-    void loadProgress() throws InterruptedException {
+    void loadProgress() {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Xml Files", "*.xml"));
         File file = chooser.showOpenDialog(stage);
         if (file != null) {
             Playback autoplay = new Playback(file.getPath(), this);
-            // autoplay.run();
-
-            //A版本：
             Thread t1 = new Thread(autoplay);
             t1.start();
-            // t1.join();
-            // startInterface();
-            System.out.println("回退");
-
-            // runAndWait(autoplay);
-            // final CountDownLatch doneLatch = new CountDownLatch(1);
             // try {
-            // new Thread(autoplay).start();
-            // } finally {
-            // doneLatch.countDown();
-            // startInterface();
-            // System.out.println("回到主界面");
+            //     t1.join();
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
             // }
+            // startInterface();
 
         }
-        // while (true) {
-        //     if (playing.get() == false) {
-        //         startInterface();
-        //         System.out.println("回到主界面");
-        //         break;
-        //     }
-        // }
 
     }
 
@@ -378,6 +356,50 @@ public class Main extends Application {
         System.out.println("show 地图");
     }
 
+    void moveRole(int selected) {
+        int x = battle.roles.get(selected).curX.get();
+        int y = battle.roles.get(selected).curY.get();
+        moveRoleLabel(selected, x, y);
+        RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
+        battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
+        calabashClient.send(message);
+    }
+
+    void afterMgc(int selected,Direction dir){
+        int x = battle.roles.get(selected).curX.get();
+        int y = battle.roles.get(selected).curY.get();
+        if (dir == Direction.RIGHT) {
+            for (int i = x + 1; i <= Attributes.gridNumX; i++) {
+                int atkid = battle.roles.get(selected).checkEnemy(i, y);
+                if (atkid == -1)
+                    continue;
+                if (battle.roles.get(atkid).alive == false) {
+                    battle.enemyDeadCount++;
+                    setDead(atkid);
+                    if (battle.enemyDeadCount == Attributes.rolesNum) {
+                        gameOver(true);
+                    }
+                }
+
+            }
+        } else if (dir == Direction.LEFT) {
+            for (int i = x - 1; i >= 0; i--) {
+                int atkid = battle.roles.get(selected).checkEnemy(i, y);
+                if (atkid == -1)
+                    continue;
+                if (battle.roles.get(atkid).alive == false) {
+                    battle.enemyDeadCount++;
+                    setDead(atkid);
+                    if (battle.enemyDeadCount == Attributes.rolesNum) {
+                        gameOver(true);
+                    }
+                }
+
+            }
+        }
+    }
+
+
     public void enterBattle() {
         decorateStage();
         battle.enemyId = enemyID;
@@ -403,63 +425,55 @@ public class Main extends Application {
                     return;
                 if (key.equals("a")) {
                     battle.roles.get(selected).move(Direction.LEFT);
-                    int x = battle.roles.get(selected).curX.get();
-                    int y = battle.roles.get(selected).curY.get();
-                    moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
-                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
-                    calabashClient.send(message);
+                    moveRole(selected);
                 } else if (key.equals("d")) {
                     battle.roles.get(selected).move(Direction.RIGHT);
-                    int x = battle.roles.get(selected).curX.get();
-                    int y = battle.roles.get(selected).curY.get();
-                    moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
-                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
-                    calabashClient.send(message);
+                    moveRole(selected);
                 } else if (key.equals("w")) {
                     battle.roles.get(selected).move(Direction.UP);
-                    int x = battle.roles.get(selected).curX.get();
-                    int y = battle.roles.get(selected).curY.get();
-                    moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
-                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
-                    calabashClient.send(message);
+                    moveRole(selected);
+
                 } else if (key.equals("s")) {
                     battle.roles.get(selected).move(Direction.DOWN);
-                    int x = battle.roles.get(selected).curX.get();
-                    int y = battle.roles.get(selected).curY.get();
-                    moveRoleLabel(selected, x, y);
-                    RoleMoveMessage message = new RoleMoveMessage(enemyID, selected, x, y);
-                    battle.gameprogress.writeIn(ActionType.MOVE, selected + " " + x + " " + y);
-                    calabashClient.send(message);
+                    moveRole(selected);
                 } else if (key.equals("j")) {
                     Direction dir = Direction.RIGHT;
                     if (battle.roles.get(selected).camp == Camp.MONSTER)
                         dir = Direction.LEFT;
-                    if (battle.roles.get(selected).healer == false) {
-                        int atkid = battle.roles.get(selected).useGnrAtk(dir);
-                        AttackMessage message = new AttackMessage(enemyID, selected, dir);
-                        battle.gameprogress.writeIn(ActionType.GNRATK, selected + " " + battle.dir2str(dir));
-                        calabashClient.send(message);
-                        if (atkid != -1) {
-                            System.out.println("攻击" + atkid + "血量为" + battle.roles.get(atkid).HP);
-                            if (battle.roles.get(atkid).alive == false) {
-                                battle.enemyDeadCount++;
-                                setDead(atkid);
-                                if (battle.enemyDeadCount == Attributes.rolesNum) {
-                                    gameOver(true);
-                                }
+                    int atkid = battle.roles.get(selected).useGnrAtk(dir);
+                    AttackMessage message = new AttackMessage(enemyID, selected, dir);
+                    battle.gameprogress.writeIn(ActionType.GNRATK, selected + " " + battle.dir2str(dir));
+                    calabashClient.send(message);
+                    if (atkid != -1) {
+                        // System.out.println("攻击" + atkid + "血量为" + battle.roles.get(atkid).HP);
+                        if (battle.roles.get(atkid).alive == false) {
+                            battle.enemyDeadCount++;
+                            setDead(atkid);
+                            if (battle.enemyDeadCount == Attributes.rolesNum) {
+                                gameOver(true);
                             }
                         }
-                    } else {// 治愈者无攻击能力，按j使用的是治愈术
-                        int healid = battle.roles.get(selected).useHealing(dir);
-                        AttackMessage message = new AttackMessage(enemyID, selected, dir);
-                        battle.gameprogress.writeIn(ActionType.HEAL, selected + " " + battle.dir2str(dir));
+                    }
+                } else if (key.equals("m")) {// 使用大招，治愈者按m使用的是治愈术
+                    Direction dir = Direction.RIGHT;
+                    if (battle.roles.get(selected).camp == Camp.MONSTER)
+                        dir = Direction.LEFT;
+                    if (battle.roles.get(selected).healer == true) {
+                        battle.roles.get(selected).useHealing(dir);
+                        // AttackMessage message = new AttackMessage(enemyID, selected, dir);
+                        // battle.gameprogress.writeIn(ActionType.HEAL, selected + " " +
+                        // battle.dir2str(dir));
+                        // calabashClient.send(message);
+                        // if (healid != -1) {
+                        // System.out.println("治愈" + healid + "血量为" + battle.roles.get(healid).HP);
+                        // }
+                    } else {
+                        battle.roles.get(selected).useMgcAtk(dir);
+                        afterMgc(selected, dir);
+                        MgcAttackMessage message = new MgcAttackMessage(enemyID, selected, dir);
+                        battle.gameprogress.writeIn(ActionType.MGCATK, selected + " " + battle.dir2str(dir));
                         calabashClient.send(message);
-                        if (healid != -1) {
-                            System.out.println("治愈" + healid + "血量为" + battle.roles.get(healid).HP);
-                        }
+                        /////////
                     }
                 }
 
@@ -495,7 +509,6 @@ public class Main extends Application {
     }
 
     void setDead(int roleID) {
-        // labels.get(roleID).setGraphic(picsDead.get(roleID));
         labels.get(roleID).setVisible(false);
         labels.get(roleID).setManaged(false);
         labels.get(roleID + Attributes.hpoffset).setVisible(false);
@@ -529,5 +542,3 @@ public class Main extends Application {
         launch(args);
     }
 }
-
-

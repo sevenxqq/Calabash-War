@@ -12,10 +12,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
-class Playback implements Runnable {
+class Playback  extends Thread {
 // class Playback  {
     String filepath;
     private Document docs;
@@ -59,14 +60,15 @@ class Playback implements Runnable {
                 switch (acttype) {
                     case "move":
                         parseMove(action);
-                        // System.out.println("move");
                         break;
                     case "gnrAtk":
                         parseGnrAtk(action);
-                        // System.out.println("atk");
                         break;
                     case "heal":
                         parseHeal(action);
+                        break;
+                    case "mgcAtk":
+                        parseMgcAtk(action);
                         break;
                     default:
                         break;
@@ -115,15 +117,36 @@ class Playback implements Runnable {
         if (atkid != -1) {
             // System.out.println("攻击" + atkid + "血量为" + play.battle.roles.get(atkid).HP);
             if (play.battle.roles.get(atkid).alive == false) {
-                // play.battle.enemyDeadCount++;
-                //play.setDead(atkid); //断点
-                play.labels.get(atkid).setVisible(false);
-                play.labels.get(atkid).setManaged(false);
-                play.labels.get(atkid + Attributes.hpoffset).setVisible(false);
-                play.labels.get(atkid + Attributes.hpoffset).setManaged(false);
+                play.setDead(atkid); 
             }
         }
     }
+
+    private void parseMgcAtk(Node action) {
+        int Chatid = Integer.parseInt(action.getAttributes().getNamedItem("ChatId").getNodeValue());
+        String direction = action.getAttributes().getNamedItem("dir").getNodeValue();
+        Direction dir;
+        switch (direction) {
+            case "UP":
+                dir = Direction.UP;
+                break;
+            case "DOWN":
+                dir = Direction.DOWN;
+                break;
+            case "LEFT":
+                dir = Direction.LEFT;
+                break;
+            case "RIGHT":
+                dir = Direction.RIGHT;
+                break;
+            default:
+                return;
+        }
+        play.battle.roles.get(Chatid).useMgcAtk(dir);
+        play.afterMgc(Chatid, dir);
+       
+    }
+
 
     private void parseHeal(Node action) {
         int Chatid = Integer.parseInt(action.getAttributes().getNamedItem("ChatId").getNodeValue());
@@ -145,20 +168,15 @@ class Playback implements Runnable {
             default:
                 return;
         }
-        int healid = play.battle.roles.get(Chatid).useHealing(dir);
-        if (healid != -1) {
-            System.out.println("治愈" + healid + "血量为" + play.battle.roles.get(healid).HP);
-        }
+        play.battle.roles.get(Chatid).useHealing(dir);
 
     }
 
     @Override
     public void run() {
-        play.playing.set(true);
         System.out.println("begin playback!");
         parse();
         System.out.println("playback done!");
-        play.playing.set(false);
     }
 
 }

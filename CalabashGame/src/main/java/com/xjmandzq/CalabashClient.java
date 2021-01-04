@@ -100,7 +100,7 @@ public class CalabashClient {
                 DatagramPacket dp = new DatagramPacket(buffer, buffer.length);
                 try{
                     ds.receive(dp);
-                    System.out.println("client receive");
+                    // System.out.println("client receive");
                     parse(dp);
                 } catch (IOException e) {
                     e.printStackTrace();

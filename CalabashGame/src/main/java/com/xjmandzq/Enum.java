@@ -9,5 +9,5 @@ enum Camp{
 }
 
 enum ActionType{
-    MOVE,GNRATK,HEAL
+    MOVE,GNRATK,MGCATK,HEAL
 }

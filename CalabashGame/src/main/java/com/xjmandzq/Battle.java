@@ -28,24 +28,24 @@ public class Battle{
         Camp m=Camp.MONSTER;
         //添加角色
         List<Creature> rolesList = Arrays.asList(
-                new Creature(0,"calabash1",Camp.CALABASH,this),
-                new Creature(1,"calabash2",Camp.CALABASH,this),
-                new Creature(2,"calabash3",Camp.CALABASH,this),
-                new Creature(3,"calabash4",Camp.CALABASH,this),
-                new Creature(4,"calabash5",Camp.CALABASH,this),
-                new Creature(5,"calabash6",Camp.CALABASH,this),
-                new Creature(6,"calabash7",Camp.CALABASH,this),
-                new Creature(7,"grandpa",Camp.CALABASH,this),
-                new Creature(8,"scorpion",Camp.MONSTER,this),
-                new Creature(9,"snake",Camp.MONSTER,this),
-                new Creature(10,"pangolin",Camp.MONSTER,this),
-                new Creature(11,"minion",Camp.MONSTER,this),
-                new Creature(12,"minion",Camp.MONSTER,this),
-                new Creature(13,"minion",Camp.MONSTER,this),
-                new Creature(14,"minion",Camp.MONSTER,this),
-                new Creature(15,"minion",Camp.MONSTER,this),
-                new Creature(16,"minion",Camp.MONSTER,this),
-                new Creature(17,"minion",Camp.MONSTER,this)
+                new Creature(0,"calabash1",Camp.CALABASH,false,this),
+                new Creature(1,"calabash2",Camp.CALABASH,false,this),
+                new Creature(2,"calabash3",Camp.CALABASH,false,this),
+                new Creature(3,"calabash4",Camp.CALABASH,false,this),
+                new Creature(4,"calabash5",Camp.CALABASH,false,this),
+                new Creature(5,"calabash6",Camp.CALABASH,false,this),
+                new Creature(6,"calabash7",Camp.CALABASH,false,this),
+                new Creature(7,"grandpa",Camp.CALABASH,true,this),
+                new Creature(8,"pangolin",Camp.CALABASH,false,this),
+                new Creature(9,"scorpion",Camp.MONSTER,false,this),
+                new Creature(10,"snake",Camp.MONSTER,true,this),
+                new Creature(11,"minion",Camp.MONSTER,false,this),
+                new Creature(12,"minion",Camp.MONSTER,false,this),
+                new Creature(13,"minion",Camp.MONSTER,false,this),
+                new Creature(14,"minion",Camp.MONSTER,false,this),
+                new Creature(15,"minion",Camp.MONSTER,false,this),
+                new Creature(16,"minion",Camp.MONSTER,false,this),
+                new Creature(17,"minion",Camp.MONSTER,false,this)
         );
         for(int i=0;i<rolesList.size();i++){
             rolesList.get(i).curX.set(startPos[i]%9);
@@ -68,6 +68,7 @@ public class Battle{
     public boolean isOccupied(int x,int y){//判断地图[x,y]位置是否被角色占用
         return map[y*Attributes.gridNumX+x]!=-1;
     }
+
 
     public String dir2str(Direction dir){
         switch(dir){

@@ -21,6 +21,8 @@ public interface Message {
     static final int NEW_PLAYER = 4;
     static final int INVITATION = 5;
     static final int REPLY = 6;
+    static final int MGCATTACK = 7;
+    static final int HEAL = 8;
     public static final int TANK_DEAD_Message = 4;
     public static final int MISSILE_DEAD_Message = 5;
     public static final int TANK_ALREADY_EXIST_Message = 6;
@@ -77,7 +79,7 @@ class RoleMoveMessage implements Message {
         try {
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
             ds.send(dp);
-            System.out.println("client send");
+            // System.out.println("client send");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -198,6 +200,200 @@ class AttackMessage implements Message {
         }
     }
 }
+
+class MgcAttackMessage implements Message {
+    private int type = Message.MGCATTACK;
+    private int targetClientID;
+    private int id;
+    private Direction dir;
+    Main player;
+
+    public MgcAttackMessage(int targetClientID, int id, Direction dir) {
+        this.targetClientID = targetClientID;
+        this.id = id;
+        this.dir = dir;
+    }
+
+    public MgcAttackMessage(Main player) {
+        this.player = player;
+    }
+
+    @Override
+    public void send(DatagramSocket ds, String ip, int udpPort) {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(30);// 指定大小, 免得字节数组扩容占用时间//TODO
+        DataOutputStream out = new DataOutputStream(bout);
+        try {
+            out.writeInt(type);
+            out.writeInt(targetClientID);
+            out.writeInt(id);
+            int dirInt = -1;
+            switch (dir) {
+                case UP:
+                    dirInt = 0;
+                    break;
+                case DOWN:
+                    dirInt = 1;
+                    break;
+                case LEFT:
+                    dirInt = 2;
+                    break;
+                case RIGHT:
+                    dirInt = 3;
+                    break;
+            }
+            out.writeInt(dirInt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] buf = bout.toByteArray();
+        try {
+            DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
+            ds.send(dp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void parse(DataInputStream in) {
+        try {
+            int targetClientID = in.readInt();
+            int id = in.readInt();
+            int dir = in.readInt();
+            if (targetClientID == player.myID) {
+                Direction direction = Direction.RIGHT;
+                switch (dir) {
+                    case 0:
+                        direction = Direction.UP;
+                        break;
+                    case 1:
+                        direction = Direction.DOWN;
+                        break;
+                    case 2:
+                        direction = Direction.LEFT;
+                        break;
+                    case 3:
+                        direction = Direction.RIGHT;
+                        break;
+                }
+                player.battle.roles.get(id).useMgcAtk(direction);
+                player.battle.gameprogress.writeIn(ActionType.MGCATK, id + " " + player.battle.dir2str(direction));
+                int beginid = 0,endid = 8,deadlife = 0;
+                if (player.battle.myCamp == Camp.MONSTER){
+                    beginid = 9;
+                    endid = 17;
+                }
+                for(int i = beginid;i<=endid;i++){
+                    if (player.battle.roles.get(i).HP <= 0) {
+                        final int deadid = i;
+                        deadlife++;
+                        Platform.runLater(() -> {
+                            player.setDead(deadid);
+                        });
+                        player.battle.myDeadCount = deadlife;
+                        if (player.battle.myDeadCount == Attributes.rolesNum) {
+                            Platform.runLater(() -> {
+                                player.gameOver(false);
+                            });
+                        }
+                    }
+                }
+                
+           
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+///
+
+class HealMessage implements Message {
+    private int type = Message.HEAL;
+    private int targetClientID;
+    private int id;
+    private Direction dir;
+    Main player;
+
+    public HealMessage(int targetClientID, int id, Direction dir) {
+        this.targetClientID = targetClientID;
+        this.id = id;
+        this.dir = dir;
+    }
+
+    public HealMessage(Main player) {
+        this.player = player;
+    }
+
+    @Override
+    public void send(DatagramSocket ds, String ip, int udpPort) {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream(30);// 指定大小, 免得字节数组扩容占用时间//TODO
+        DataOutputStream out = new DataOutputStream(bout);
+        try {
+            out.writeInt(type);
+            out.writeInt(targetClientID);
+            out.writeInt(id);
+            int dirInt = -1;
+            switch (dir) {
+                case UP:
+                    dirInt = 0;
+                    break;
+                case DOWN:
+                    dirInt = 1;
+                    break;
+                case LEFT:
+                    dirInt = 2;
+                    break;
+                case RIGHT:
+                    dirInt = 3;
+                    break;
+            }
+            out.writeInt(dirInt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] buf = bout.toByteArray();
+        try {
+            DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
+            ds.send(dp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void parse(DataInputStream in) {
+        try {
+            int targetClientID = in.readInt();
+            int id = in.readInt();
+            int dir = in.readInt();
+            if (targetClientID == player.myID) {
+                Direction direction = Direction.RIGHT;
+                switch (dir) {
+                    case 0:
+                        direction = Direction.UP;
+                        break;
+                    case 1:
+                        direction = Direction.DOWN;
+                        break;
+                    case 2:
+                        direction = Direction.LEFT;
+                        break;
+                    case 3:
+                        direction = Direction.RIGHT;
+                        break;
+                }
+                player.battle.roles.get(id).useHealing(direction);
+                player.battle.gameprogress.writeIn(ActionType.HEAL, id + " " + player.battle.dir2str(direction));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+////
 
 class NewPlayerMessage implements Message {
     private int type = Message.NEW_PLAYER;
