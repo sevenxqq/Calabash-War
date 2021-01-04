@@ -80,7 +80,6 @@ class RoleMoveMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
             ds.send(dp);
-            System.out.println("client send");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,7 +94,7 @@ class RoleMoveMessage implements Message {
             int y = in.readInt();
             if(targetClientID==player.myID){
                 player.battle.roles.get(id).move(x,y);
-                player.moveRoleLabel(id,x,y);
+                player.moveRole(id,x,y);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -182,6 +181,7 @@ class AttackMessage implements Message {
     }
 }
 
+
 class NewPlayerMessage implements Message{
     private int type=Message.NEW_PLAYER;
     private int playerID;
@@ -261,7 +261,6 @@ class InviteMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
             ds.send(dp);
-            System.out.println("send");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -321,7 +320,6 @@ class ReplyMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, udpPort));
             ds.send(dp);
-            System.out.println("send");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -333,7 +331,6 @@ class ReplyMessage implements Message {
             int id1 = in.readInt();
             int id2 = in.readInt();
             int r=in.readInt();
-            System.out.println("收到回复");
             if(id2==player.myID) {//被回复
                 System.out.println("收到给我的回复");
                 System.out.println(r);

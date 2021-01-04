@@ -17,6 +17,8 @@ public final class Attributes{
     public static final int mapRight=1110;//地图右边界（像素级）
     public static final int mapBottom=590;//地图下边界（像素级）
     public static final int rolesNum=9;//角色数量
+    public static final int hpoffset = 18;//角色id到血条的偏移
+    public static final int deadoffset = 18;
     public static final String localServerIP="127.0.0.1";//本机测试时服务器ip地址
     public static final String remoteServerIP="172.24.52.200";//联机测试时服务器ip地址（nju）
 
@@ -25,6 +27,8 @@ public final class Attributes{
     public static final int START = 1;
     public static final int STARTICON = 2;
     public static final int EXITICON = 3;
+    public static final int LOADICON = 28;
+    //角色
     public static final int CALABASH1 = 4;
     public static final int CALABASH2 = 5;
     public static final int CALABASH3 = 6;
@@ -36,7 +40,8 @@ public final class Attributes{
     public static final int PANGOLIN = 12;
     public static final int SNAKE = 13;
     public static final int SCORPION = 14;
-    public static final int MINION = 15;
+    public static final int MINION3 = 15;
+
     public static final int CALABASH1_DEAD = 16;
     public static final int CALABASH2_DEAD = 17;
     public static final int CALABASH3_DEAD = 18;
@@ -49,6 +54,13 @@ public final class Attributes{
     public static final int SNAKE_DEAD = 25;
     public static final int SCORPION_DEAD = 26;
     public static final int MINION_DEAD = 27;
+
+    public static final int MINION4 = 29;
+    public static final int MINION5 = 30;
+    public static final int MINION6 = 31;
+    public static final int MINION7 = 32;
+    public static final int MINION8 = 33;
+    public static final int MINION9 = 34;
 
     //
     public static void init(){
@@ -68,20 +80,30 @@ public final class Attributes{
         images.add(new Image("pangolin.jpeg"));
         images.add(new Image("snake.PNG"));
         images.add(new Image("scorpion.PNG"));
-        images.add(new Image("minion.PNG"));
-        //添加角色死亡图片
+        images.add(new Image("minion3.PNG"));
 
-        images.add(new Image("brother1_dead.png"));
-        images.add(new Image("brother2_dead.png"));
-        images.add(new Image("brother3_dead.png"));
-        images.add(new Image("brother4_dead.png"));
-        images.add(new Image("brother5_dead.png"));
-        images.add(new Image("brother6_dead.png"));
-        images.add(new Image("brother7_dead.png"));
-        images.add(new Image("grandpa_dead.png"));
-        images.add(new Image("pangolin_dead.jpg"));
-        images.add(new Image("snake_dead.png"));
-        images.add(new Image("scorpion_dead.png"));
-        images.add(new Image("minion_dead.png"));
+        //添加角色死亡图片
+        images.add(new Image("deadbro1.png"));
+        images.add(new Image("deadbro2.png"));
+        images.add(new Image("deadbro3.png"));
+        images.add(new Image("deadbro4.png"));
+        images.add(new Image("deadbro5.png"));
+        images.add(new Image("deadbro6.png"));
+        images.add(new Image("deadbro7.png"));
+        images.add(new Image("deadgrandpa.png"));
+        images.add(new Image("deadpangolin.jpeg"));
+        images.add(new Image("deadsnake.png"));
+        images.add(new Image("deadscorpion.png"));
+        images.add(new Image("deadminion.png"));
+
+        //补充
+        images.add(new Image("load.PNG"));
+
+        images.add(new Image("minion4.PNG"));
+        images.add(new Image("minion5.PNG"));
+        images.add(new Image("minion6.PNG"));
+        images.add(new Image("minion7.PNG"));
+        images.add(new Image("minion8.PNG"));
+        images.add(new Image("minion9.PNG"));
     }
 }

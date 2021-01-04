@@ -83,7 +83,7 @@ public class Creature implements Runnable{
             default:;
         }
     }
-    public void move(int x,int y){//移动到[x,y]
+    public boolean move(int x,int y){//移动到[x,y]
         //TODO:加上只能移到相邻格子的限制？
         if (x>=0 && x<Attributes.gridNumX && y>=0 && y<Attributes.gridNumY
                 && !battle.isOccupied(x,y)){
@@ -93,8 +93,47 @@ public class Creature implements Runnable{
             battle.map[Attributes.gridNumX*y+x]=id;//标记新位置
             curX.set(x);
             curY.set(y);
+            return true;
         }
+        else
+            return  false;
     }
+    /*
+     * parm:指向方向 解释：只能向一个格子内的友方使用治愈术 附加：后期加绿色向上数字表示加血效果
+     */
+    public int useHealing(Direction dir) {
+        if (this.MP <= 0)
+            return -1;
+        int heelx = curX.get(), heely = curY.get();
+        switch (dir) {
+            case UP:
+                heely--;
+                break;
+            case DOWN:
+                heely++;
+                break;
+            case LEFT:
+                heelx--;
+                break;
+            case RIGHT:
+                heelx++;
+                break;
+            default:
+                return -1;
+        }
+        if (battle.isOccupied(heelx, heely) == false)
+            return -1;
+        ;
+        int heelid = battle.map[Attributes.gridNumX * heely + heelx];
+        if (this.camp != battle.roles.get(heelid).camp)
+            return -1;
+        if (battle.roles.get(heelid).alive == false)
+            return -1;
+        battle.roles.get(heelid).beenHealed(this.healing);
+        this.MP -= this.healCost;
+        return heelid;
+    }
+
     /*
     parm:攻击方向
     解释：只能朝一个格子内的敌人发起攻击

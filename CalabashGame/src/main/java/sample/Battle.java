@@ -16,6 +16,7 @@ public class Battle{
     int myDeadCount=0;//己方死亡角色个数
     int enemyDeadCount=0;//敌方死亡角色个数
     int selected;//被选中的角色id
+    XMLFile gameprogress = new XMLFile();//记录战局的文件
     Battle(){
         //游戏开始时角色在地图上的排列情况
         for(int i=0;i<map.length;i++){
@@ -72,6 +73,16 @@ public class Battle{
     }
     public boolean isOccupied(int x,int y){//判断地图[x,y]位置是否被角色占用
         return map[y*Attributes.gridNumX+x]!=-1;
+    }
+
+    public String dir2str(Direction dir){
+        switch(dir){
+            case LEFT: return "LEFT";
+            case RIGHT: return "RIGHT";
+            case UP: return "UP";
+            case DOWN: return "DOWN";
+            default:return "";
+        }
     }
 
 }
