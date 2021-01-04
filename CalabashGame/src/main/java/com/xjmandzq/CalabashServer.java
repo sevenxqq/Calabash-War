@@ -205,7 +205,7 @@ public class CalabashServer extends Frame {
     /************** 服务器可视化 **************/
     @Override
     public void paint(Graphics g) {
-        g.drawString("TankClient :", 30, 50);
+        g.drawString("", 30, 50);
         int y = 80;
         for(int i = 0; i < clients.size(); i++){//显示出每个客户端的信息
             Client c = clients.get(i);

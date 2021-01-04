@@ -93,39 +93,34 @@ public class Main extends Application {
         start.setFitHeight(Attributes.height);
         start.setFitWidth(Attributes.width);
         canvas.getChildren().add(start);
-        // 开始游戏按钮
+        //开始游戏按钮
         ImageView startGame = new ImageView(Attributes.images.get(Attributes.STARTICON));
-        startGame.setFitHeight(100);
-        startGame.setFitWidth(200);
-        Label startLabel = new Label("", startGame);
-        startLabel.setMaxSize(200, 100);
-        startLabel.setLayoutX(550);
+        startGame.setFitHeight(54);
+        startGame.setFitWidth(175);
+        Label startLabel = new Label("",startGame);
+        startLabel.setLayoutX(350);
         startLabel.setLayoutY(550);
-        startLabel.setOnMouseClicked((MouseEvent e) -> {
-            matchPlayer();
-        });
+        startLabel.setOnMouseClicked((MouseEvent e)->{ matchPlayer(); });
         canvas.getChildren().add(startLabel);
-        // 退出按钮
+
+        //退出按钮
         ImageView exitImage = new ImageView(Attributes.images.get(Attributes.EXITICON));
-        exitImage.setFitHeight(100);
-        exitImage.setFitWidth(200);
-        Label exitLabel = new Label("", exitImage);
-        exitLabel.setMaxSize(200, 100);
-        exitLabel.setLayoutX(850);
+        exitImage.setFitHeight(54);
+        exitImage.setFitWidth(175);
+        Label exitLabel = new Label("",exitImage);
+        exitLabel.setMaxSize(350,109);
+        exitLabel.setLayoutX(950);
         exitLabel.setLayoutY(550);
-        exitLabel.setOnMouseClicked((MouseEvent e) -> {
-            System.exit(0);
-        });
+        exitLabel.setOnMouseClicked((MouseEvent e)->{ System.exit(0); });
         canvas.getChildren().add(exitLabel);
+
         // 读取进度按钮
         ImageView loadfile = new ImageView(Attributes.images.get(Attributes.LOADICON));
-        loadfile.setFitHeight(100);
-        loadfile.setFitWidth(200);
+        loadfile.setFitHeight(54);
+        loadfile.setFitWidth(175);
         Label loadLabel = new Label("", loadfile);
-        loadLabel.setMaxSize(200, 100);
-        loadLabel.setLayoutX(360);
-        loadLabel.setLayoutY(360);
-        // System.out.println("add load label");
+        loadLabel.setLayoutX(650);
+        loadLabel.setLayoutY(550);
         loadLabel.setOnMouseClicked((MouseEvent e) -> {
             loadProgress();
         });
@@ -265,13 +260,6 @@ public class Main extends Application {
             Playback autoplay = new Playback(file.getPath(), this);
             Thread t1 = new Thread(autoplay);
             t1.start();
-            // try {
-            //     t1.join();
-            // } catch (InterruptedException e) {
-            //     e.printStackTrace();
-            // }
-            // startInterface();
-
         }
 
     }
@@ -299,17 +287,18 @@ public class Main extends Application {
                 new ImageView(Attributes.images.get(Attributes.PANGOLIN)),
                 new ImageView(Attributes.images.get(Attributes.SCORPION)),
                 new ImageView(Attributes.images.get(Attributes.SNAKE)),
-                new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION)),
-                new ImageView(Attributes.images.get(Attributes.MINION)));
+                new ImageView(Attributes.images.get(Attributes.MINION3)),
+                new ImageView(Attributes.images.get(Attributes.MINION4)),
+                new ImageView(Attributes.images.get(Attributes.MINION5)),
+                new ImageView(Attributes.images.get(Attributes.MINION6)),
+                new ImageView(Attributes.images.get(Attributes.MINION7)),
+                new ImageView(Attributes.images.get(Attributes.MINION8)),
+                new ImageView(Attributes.images.get(Attributes.MINION9)));
 
         pics.addAll(picsList);
         ///////////
-        List<ImageView> picsListDead = Arrays.asList(new ImageView(Attributes.images.get(Attributes.CALABASH1_DEAD)),
+        List<ImageView> picsListDead = Arrays.asList(
+                new ImageView(Attributes.images.get(Attributes.CALABASH1_DEAD)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH2_DEAD)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH3_DEAD)),
                 new ImageView(Attributes.images.get(Attributes.CALABASH4_DEAD)),

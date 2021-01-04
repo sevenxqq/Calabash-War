@@ -16,7 +16,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
-class Playback  extends Thread {
+class Playback  implements Runnable {
 // class Playback  {
     String filepath;
     private Document docs;
