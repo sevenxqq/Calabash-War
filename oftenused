@@ -8,7 +8,11 @@ javac -encoding UTF-8 CalabashServer.java
 java GreetingClient localhost 6066
 javac GreetingServer.java 
 java GreetingServer 
+172.24.52.200
+192.168.43.63
 
 运行jar包
 java -jar CalabashGame-1.0-SNAPSHOT.jar 
 java -cp CalabashGame-1.0-SNAPSHOT.jar com.xjmandzq.Main
+java -classpath ****.jar com.xjmandzq.CalabashServer
+java -classpath CalabashGame-1.0-SNAPSHOT.jar   com.xjmandzq.CalabashServer
